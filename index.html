@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="index.js" async></script>
+  </head>
+  <body>
+    <div id="game">
+      <div class="controls">
+        <label for="width">width</label>
+        <input id="width" type="number" />
+        <label for="height">height</label>
+        <input id="height" type="number" />
+        <button id="create" onclick="handleCreateTable()">create</button>
+
+        <button id="generate" onclick="generateTable()">generate</button>
+        <label for="speed">speed</label>
+        <input id="speed" type="number" min="300" step="100" max="10000" />
+        <button id="start">start</button>
+      </div>
+      <table id="field">
+        <tbody>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+          <tr>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+            <td class="game-table-cell"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
