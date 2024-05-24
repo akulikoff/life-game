@@ -2,6 +2,7 @@
 createTable(20, 20);
 
 var speed = document.getElementById("speed");
+
 var field = document.getElementById("field");
 document.getElementById("start").addEventListener("click", playGame);
 document.getElementById("create").addEventListener("click", handleCreateTable);
