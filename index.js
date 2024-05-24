@@ -52,43 +52,33 @@ function generateTable() {
 // запуск игры
 function playGame(speed) {
   if (!speed) {
-    speed = 1000;
+    speed = 2000;
   }
 
-  setInterval(generateNextGeneration, speed);
+  setInterval(run, speed);
 }
 function stopGame() {
   clearInterval(speed);
 }
-function generateNextGeneration() {
-  // Получение всех ячеек с классом "life"
-  const cells = Array.from(document.getElementsByClassName("cell-life"));
-  if (cells.length === 0) {
-    stopGame();
-  }
-  console.log(cells);
-  // Перебор каждой ячейки
-  cells.forEach((cell) => {
-    // Получение координат текущей ячейки
-    const row = parseInt(cell.parentNode.rowIndex);
-    const col = parseInt(cell.cellIndex);
-
-    // Получение соседних элементов
-    const neighbors = getNeighbors(field, row, col);
-    console.log(neighbors);
-
-    // Проверка условий и применение класса "life"
-    if (cell.classList.contains("cell-life")) {
-      if (neighbors.length < 2 || neighbors.length > 3) {
-        cell.classList.remove("cell-life");
-      }
-    } else {
-      if (neighbors.length === 3) {
-        cell.classList.add("cell-life");
+function generateNextGeneration(field) {
+  let result = [];
+  for (let i = 0; i < field.length; i++) {
+    result[i] = [];
+    for (let j = 0; j < field[i].length; j++) {
+      if (field[i][j]) {
+        result[i][j] = false;
+      } else {
+        result[i][j] = true;
       }
     }
-  });
+  }
+  return result;
 }
+function run() {
+  fieldData = generateNextGeneration(fieldData);
+  fillTable(fieldData);
+}
+
 function create2DArray(rows, cols) {
   let array = [];
   for (let i = 0; i < rows; i++) {
