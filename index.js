@@ -1,6 +1,12 @@
+// генерация дефолтного поля
 createTable(20, 20);
+
 var speed = document.getElementById("speed");
 var field = document.getElementById("field");
+document.getElementById("start").addEventListener("click", playGame);
+document.getElementById("create").addEventListener("click", handleCreateTable);
+document.getElementById("generate").addEventListener("click", generateTable);
+
 field.addEventListener("click", function (e) {
   if (e.target.classList.contains("game-table-cell")) {
     e.target.classList.add("cell-life");
@@ -9,6 +15,7 @@ field.addEventListener("click", function (e) {
 field.addEventListener("mousemove", function (e) {
   if (e.buttons === 1) {
     e.target.classList.add("cell-life");
+    field.classList.remove("cell-life");
   }
 });
 function generateRandomNumber() {
@@ -22,21 +29,33 @@ function generateTable() {
   let cols = generateRandomNumber();
   return createTable(rows, cols);
 }
+// запуск игры
 function playGame(speed) {
+  if (!speed) {
+    speed = 1000;
+  }
+
   setInterval(generateNextGeneration(), speed);
+}
+function stopGame() {
+  clearInterval(speed);
 }
 function generateNextGeneration() {
   // Получение всех ячеек с классом "life"
-  const cells = document.querySelectorAll(".cell-life");
-
+  const cells = Array.from(document.getElementsByClassName("cell-life"));
+  if (cells.length === 0) {
+    stopGame();
+  }
+  console.log(cells);
   // Перебор каждой ячейки
   cells.forEach((cell) => {
     // Получение координат текущей ячейки
-    const row = cell.parentNode.rowIndex;
-    const col = cell.cellIndex;
+    const row = parseInt(cell.parentNode.rowIndex);
+    const col = parseInt(cell.cellIndex);
 
     // Получение соседних элементов
-    const neighbors = getNeighbors(cells, row, col);
+    const neighbors = getNeighbors(field, row, col);
+    console.log(neighbors);
 
     // Проверка условий и применение класса "life"
     if (cell.classList.contains("cell-life")) {
@@ -60,27 +79,57 @@ function create2DArray(rows, cols) {
   }
   return array;
 }
-function getNeighbors(array, row, col) {
-  const numRows = array.length;
-  const numCols = array[0].length;
+// Предположим, что у нас есть двумерный массив arr размером 20 на 20
 
-  const neighbors = [];
+// Определение соседей для элемента в позиции (row, col), включая соседей по диагонали и обработку краевых случаев
+function getNeighbors(arr, row, col) {
+  let neighbors = [];
 
-  // Проверка соседей вокруг элемента
-  for (let i = -1; i <= 1; i++) {
-    for (let j = -1; j <= 1; j++) {
-      // Исключаем элемент самого себя
-      if (i === 0 && j === 0) continue;
+  // Проверяем соседние элементы по горизонтали и вертикали
+  if (row > 0) {
+    neighbors.push(arr[row - 1][col]); // Верхний сосед
+  }
+  if (row < arr.length - 1) {
+    neighbors.push(arr[row + 1][col]); // Нижний сосед
+  }
+  if (col > 0) {
+    neighbors.push(arr[row][col - 1]); // Левый сосед
+  }
+  if (col < arr[0].length - 1) {
+    neighbors.push(arr[row][col + 1]); // Правый сосед
+  }
 
-      const neighborRow = (row + i + numRows) % numRows; // Определение индекса строки соседа с учетом противоположного края
-      const neighborCol = (col + j + numCols) % numCols; // Определение индекса столбца соседа с учетом противоположного края
+  // Проверяем соседние элементы по диагонали и обрабатываем краевые случаи
+  if (row > 0 && col > 0) {
+    neighbors.push(arr[row - 1][col - 1]); // Верхний левый сосед
+  }
+  if (row > 0 && col < arr[0].length - 1) {
+    neighbors.push(arr[row - 1][col + 1]); // Верхний правый сосед
+  }
+  if (row < arr.length - 1 && col > 0) {
+    neighbors.push(arr[row + 1][col - 1]); // Нижний левый сосед
+  }
+  if (row < arr.length - 1 && col < arr[0].length - 1) {
+    neighbors.push(arr[row + 1][col + 1]); // Нижний правый сосед
+  }
 
-      neighbors.push(array[neighborRow][neighborCol]);
-    }
+  // Обработка краевых случаев
+  if (row === 0) {
+    neighbors.push(arr[arr.length - 1][col]); // Верхний сосед (противоположный край)
+  }
+  if (row === arr.length - 1) {
+    neighbors.push(arr[0][col]); // Нижний сосед (противоположный край)
+  }
+  if (col === 0) {
+    neighbors.push(arr[row][arr[0].length - 1]); // Левый сосед (противоположный край)
+  }
+  if (col === arr[0].length - 1) {
+    neighbors.push(arr[row][0]); // Правый сосед (противоположный край)
   }
 
   return neighbors;
 }
+
 function handleCreateTable() {
   var width = document.getElementById("width");
   var height = document.getElementById("height");
