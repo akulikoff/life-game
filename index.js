@@ -75,11 +75,11 @@ function generateTable() {
 }
 // запуск игры
 function playGame(event) {
-  if (!speed) {
-    speed = 10000;
+  let v = speed.value;
+  if (!v) {
+    v = 1000;
   }
-
-  setInterval(run, speed);
+  setInterval(run, v);
 }
 function stopGame() {
   clearInterval(speed);
