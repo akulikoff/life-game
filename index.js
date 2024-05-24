@@ -31,26 +31,17 @@ function create2DArray(rows, cols) {
   }
   return array;
 }
-var width = document.getElementById("width");
-var height = document.getElementById("height");
-var userRows = width.value;
-var userCols = height.value;
 function handleCreateTable() {
+  var width = document.getElementById("width");
+  var height = document.getElementById("height");
+  var userRows = width.value;
+  var userCols = height.value;
+  console.log(userRows, userCols);
   createTable(userRows, userCols);
-  var field = document.getElementById("field");
-  field.addEventListener("click", function (e) {
-    if (event.target.classList.contains("game-table-cell")) {
-      event.target.classList.add("cell-life");
-    }
-  });
-  field.addEventListener("mousemove", function (e) {
-    if (event.buttons === 1) {
-      event.target.classList.add("cell-life");
-    }
-  });
 }
 function createTable(rows, columns) {
-  var isExistTable = document.getElementById("field") !== null;
+  var field = document.getElementById("field");
+  var isExistTable = field !== null;
   if (isExistTable) {
     var element = document.getElementById("field");
     element.parentNode.removeChild(element);
@@ -61,6 +52,16 @@ function createTable(rows, columns) {
   var table = document.createElement("table");
   document.getElementById("game").appendChild(table);
   table.id = "field";
+  table.addEventListener("click", function (e) {
+    if (e.target.classList.contains("game-table-cell")) {
+      e.target.classList.add("cell-life");
+    }
+  });
+  table.addEventListener("mousemove", function (e) {
+    if (e.buttons === 1) {
+      e.target.classList.add("cell-life");
+    }
+  });
   // Создаем строки
   for (var i = 0; i < rows; i++) {
     var row = document.createElement("tr");
