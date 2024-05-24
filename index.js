@@ -1,3 +1,17 @@
+/* TODO
+реализовать логику подсчёта соседей и переключения класса
+генерацию случайной расстановки живых
+проверить работу выбора скорости
+удалять слушатели событий после старта
+добавить счётчик очков
+добавить логику остановки игры
+
+масштабировать поле 
+    минимальные размеры клетки
+    максимальные размеры контейнера поля
+
+*/
+
 // генерация дефолтного поля
 createTable(20, 20);
 var speed = document.getElementById("speed");
@@ -11,23 +25,33 @@ field.addEventListener(
   "click",
   function (e) {
     if (e.target.classList.contains("game-table-cell")) {
-      e.target.classList.add("cell-life");
+      e.target.classList.toggle("cell-life");
       [i, j] = getCoordsById(e.target.id);
-      console.log(i, j);
-      fieldData[i][j] = true;
+      if (e.target.classList.contains("cell-life")) {
+        fieldData[i][j] = true;
+      } else {
+        fieldData[i][j] = false;
+      }
     }
   },
   true
 );
-field.addEventListener("mousemove", function (e) {
-  if (e.buttons === 1) {
-    e.target.classList.add("cell-life");
-    field.classList.remove("cell-life"); // TODO разобраться
-    [i, j] = getCoordsById(e.target.id);
-    console.log(i, j);
-    fieldData[i][j] = true;
-  }
-});
+field.addEventListener(
+  "mousemove",
+  function (e) {
+    if (e.buttons === 1 && e) {
+      e.target.classList.toggle("cell-life");
+      field.classList.remove("cell-life");
+      const [i, j] = getCoordsById(e.target.id);
+      if (e.target.classList.contains("cell-life")) {
+        fieldData[i][j] = true;
+      } else {
+        fieldData[i][j] = false;
+      }
+    }
+  },
+  true
+);
 function getCoordsById(id) {
   let temp = id.split("-");
   if (temp.length < 3) {
@@ -50,9 +74,9 @@ function generateTable() {
   return createTable(rows, cols);
 }
 // запуск игры
-function playGame(speed) {
+function playGame(event) {
   if (!speed) {
-    speed = 2000;
+    speed = 10000;
   }
 
   setInterval(run, speed);
@@ -76,6 +100,7 @@ function generateNextGeneration(field) {
 }
 function run() {
   fieldData = generateNextGeneration(fieldData);
+  console.log("sdv");
   fillTable(fieldData);
 }
 
@@ -176,16 +201,16 @@ function createTable(rows, columns) {
   var table = document.createElement("table");
   document.getElementById("game").appendChild(table);
   table.id = "field";
-  table.addEventListener("click", function (e) {
-    if (e.target.classList.contains("game-table-cell")) {
-      e.target.classList.add("cell-life");
-    }
-  });
-  table.addEventListener("mousemove", function (e) {
-    if (e.buttons === 1) {
-      e.target.classList.add("cell-life");
-    }
-  });
+  //   table.addEventListener("click", function (e) {
+  //     if (e.target.classList.contains("game-table-cell")) {
+  //       e.target.classList.add("cell-life");
+  //     }
+  //   });
+  //   table.addEventListener("mousemove", function (e) {
+  //     if (e.buttons === 1) {
+  //       e.target.classList.add("cell-life");
+  //     }
+  //   });
   // Создаем строки
   fieldData = [];
   for (var i = 0; i < rows; i++) {
