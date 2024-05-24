@@ -1,7 +1,10 @@
 /* TODO
-реализовать логику подсчёта соседей и переключения класса
-генерацию случайной расстановки живых
-проверить работу выбора скорости
++реализовать логику подсчёта соседей и переключения класса
+ -генерацию случайной расстановки живых
++проверить работу выбора скорости
+
+
+провверить создание таблицы (слушатель)
 удалять слушатели событий после старта
 добавить счётчик очков
 добавить логику остановки игры
@@ -13,16 +16,16 @@
 */
 
 // генерация дефолтного поля
-createTable(20, 20);
+createTable(50, 50);
 var speed = document.getElementById("speed");
 var fieldData;
 var field = document.getElementById("field");
 document.getElementById("start").addEventListener("click", playGame);
 document.getElementById("create").addEventListener("click", handleCreateTable);
-document.getElementById("generate").addEventListener("click", generateTable);
+document.getElementById("generate").addEventListener("click", reGenerateField);
 
 field.addEventListener(
-  "click",
+  "mouseup",
   function (e) {
     if (e.target.classList.contains("game-table-cell")) {
       e.target.classList.toggle("cell-life");
@@ -62,29 +65,9 @@ function getCoordsById(id) {
 
   return [x, y];
 }
-function generateRandomNumber() {
-  var min = 10;
-  var max = 100;
-  var randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-  return randomNumber;
-}
-function generateTable() {
-  let rows = generateRandomNumber();
-  let cols = generateRandomNumber();
-  return createTable(rows, cols);
-}
-// запуск игры
-function playGame(event) {
-  let v = speed.value;
-  if (!v) {
-    v = 1000;
-  }
-  setInterval(run, v);
-}
-function stopGame() {
-  clearInterval(speed);
-}
-function generateNextGeneration(field) {
+
+function reGenerateField(field) {
+  // TODO
   let result = [];
   for (let i = 0; i < field.length; i++) {
     result[i] = [];
@@ -98,71 +81,66 @@ function generateNextGeneration(field) {
   }
   return result;
 }
+// запуск игры
+function playGame(event) {
+  let v = speed.value;
+  if (!v) {
+    v = 50;
+  }
+  setInterval(run, v);
+}
+function stopGame() {
+  clearInterval(speed);
+}
+function generateNextGeneration(field) {
+  let result = [];
+  function countLiveNeighbors(x, y) {
+    let count = 0;
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i === 0 && j === 0) continue;
+
+        let ni = x + i;
+        if (ni < 0) ni = field.length - 1;
+        if (ni >= field.length) ni = 0;
+
+        let nj = y + j;
+        if (nj < 0) nj = field[0].length - 1;
+        if (nj >= field[0].length) nj = 0;
+
+        if (field[ni][nj]) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+  for (let i = 0; i < field.length; i++) {
+    result[i] = [];
+    for (let j = 0; j < field[i].length; j++) {
+      let current = field[i][j];
+      let liveNeibors = countLiveNeighbors(i, j);
+      if (current) {
+        if (liveNeibors == 2 || liveNeibors == 3) {
+          result[i][j] = true;
+        } else {
+          result[i][j] = false;
+        }
+      } else {
+        if (liveNeibors == 3) {
+          result[i][j] = true;
+        } else {
+          result[i][j] = false;
+        }
+      }
+    }
+  }
+  return result;
+}
 function run() {
   fieldData = generateNextGeneration(fieldData);
   console.log("sdv");
   fillTable(fieldData);
-}
-
-function create2DArray(rows, cols) {
-  let array = [];
-  for (let i = 0; i < rows; i++) {
-    array[i] = [];
-    for (let j = 0; j < cols; j++) {
-      array[i][j] = 0; // или любое другое значение по умолчанию
-    }
-  }
-  return array;
-}
-// Предположим, что у нас есть двумерный массив arr размером 20 на 20
-
-// Определение соседей для элемента в позиции (row, col), включая соседей по диагонали и обработку краевых случаев
-function getNeighbors(arr, row, col) {
-  let neighbors = [];
-
-  // Проверяем соседние элементы по горизонтали и вертикали
-  if (row > 0) {
-    neighbors.push(arr[row - 1][col]); // Верхний сосед
-  }
-  if (row < arr.length - 1) {
-    neighbors.push(arr[row + 1][col]); // Нижний сосед
-  }
-  if (col > 0) {
-    neighbors.push(arr[row][col - 1]); // Левый сосед
-  }
-  if (col < arr[0].length - 1) {
-    neighbors.push(arr[row][col + 1]); // Правый сосед
-  }
-
-  // Проверяем соседние элементы по диагонали и обрабатываем краевые случаи
-  if (row > 0 && col > 0) {
-    neighbors.push(arr[row - 1][col - 1]); // Верхний левый сосед
-  }
-  if (row > 0 && col < arr[0].length - 1) {
-    neighbors.push(arr[row - 1][col + 1]); // Верхний правый сосед
-  }
-  if (row < arr.length - 1 && col > 0) {
-    neighbors.push(arr[row + 1][col - 1]); // Нижний левый сосед
-  }
-  if (row < arr.length - 1 && col < arr[0].length - 1) {
-    neighbors.push(arr[row + 1][col + 1]); // Нижний правый сосед
-  }
-
-  // Обработка краевых случаев
-  if (row === 0) {
-    neighbors.push(arr[arr.length - 1][col]); // Верхний сосед (противоположный край)
-  }
-  if (row === arr.length - 1) {
-    neighbors.push(arr[0][col]); // Нижний сосед (противоположный край)
-  }
-  if (col === 0) {
-    neighbors.push(arr[row][arr[0].length - 1]); // Левый сосед (противоположный край)
-  }
-  if (col === arr[0].length - 1) {
-    neighbors.push(arr[row][0]); // Правый сосед (противоположный край)
-  }
-
-  return neighbors;
 }
 
 function handleCreateTable() {
@@ -229,7 +207,3 @@ function createTable(rows, columns) {
 
   return table;
 }
-
-const id = "cell-123-345";
-const coords = getCoordsById(id);
-console.log(coords); // { x: 123, y: 345 }
