@@ -1,24 +1,43 @@
 // генерация дефолтного поля
 createTable(20, 20);
-
 var speed = document.getElementById("speed");
-
+var fieldData;
 var field = document.getElementById("field");
 document.getElementById("start").addEventListener("click", playGame);
 document.getElementById("create").addEventListener("click", handleCreateTable);
 document.getElementById("generate").addEventListener("click", generateTable);
 
-field.addEventListener("click", function (e) {
-  if (e.target.classList.contains("game-table-cell")) {
-    e.target.classList.add("cell-life");
-  }
-});
+field.addEventListener(
+  "click",
+  function (e) {
+    if (e.target.classList.contains("game-table-cell")) {
+      e.target.classList.add("cell-life");
+      [i, j] = getCoordsById(e.target.id);
+      console.log(i, j);
+      fieldData[i][j] = true;
+    }
+  },
+  true
+);
 field.addEventListener("mousemove", function (e) {
   if (e.buttons === 1) {
     e.target.classList.add("cell-life");
-    field.classList.remove("cell-life");
+    field.classList.remove("cell-life"); // TODO разобраться
+    [i, j] = getCoordsById(e.target.id);
+    console.log(i, j);
+    fieldData[i][j] = true;
   }
 });
+function getCoordsById(id) {
+  let temp = id.split("-");
+  if (temp.length < 3) {
+    console.error("неверный ID");
+  }
+  let x = temp[1];
+  let y = temp[2];
+
+  return [x, y];
+}
 function generateRandomNumber() {
   var min = 10;
   var max = 100;
@@ -36,7 +55,7 @@ function playGame(speed) {
     speed = 1000;
   }
 
-  setInterval(generateNextGeneration(), speed);
+  setInterval(generateNextGeneration, speed);
 }
 function stopGame() {
   clearInterval(speed);
@@ -138,6 +157,21 @@ function handleCreateTable() {
   var userCols = height.value;
   createTable(userRows, userCols);
 }
+function getCellIdByCoords(i, j) {
+  return "cell-" + i + "-" + j;
+}
+function fillTable(fieldData) {
+  for (var i = 0; i < fieldData.length; i++) {
+    for (var j = 0; j < fieldData[i].length; j++) {
+      var cell = document.getElementById(getCellIdByCoords(i, j));
+      if (fieldData[i][j]) {
+        cell.classList.add("cell-life");
+      } else {
+        cell.classList.remove("cell-life");
+      }
+    }
+  }
+}
 function createTable(rows, columns) {
   if (!rows || !columns || rows <= 0 || columns <= 0) return;
   var field = document.getElementById("field");
@@ -163,19 +197,24 @@ function createTable(rows, columns) {
     }
   });
   // Создаем строки
+  fieldData = [];
   for (var i = 0; i < rows; i++) {
+    fieldData[i] = [];
     var row = document.createElement("tr");
-
     // Создаем столбцы
     for (var j = 0; j < columns; j++) {
+      fieldData[i][j] = false;
       var cell = document.createElement("td");
       cell.className = "game-table-cell";
-      cell.id = "cell-" + i + "-" + j;
+      cell.id = getCellIdByCoords(i, j);
       row.appendChild(cell);
     }
-
     table.appendChild(row);
   }
 
   return table;
 }
+
+const id = "cell-123-345";
+const coords = getCoordsById(id);
+console.log(coords); // { x: 123, y: 345 }
