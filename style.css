@@ -19,11 +19,11 @@ input {
 }
 #field {
   border-collapse: collapse;
-  background-color: #ececec;
+  background-color: #fff;
 }
 .field {
   border-collapse: collapse;
-  background-color: #ececec;
+  background-color: #fff;
 }
 .game-table-cell {
   width: 15px;
@@ -32,4 +32,5 @@ input {
 }
 .cell-life {
   background-color: red;
+  border-radius: 50%;
 }

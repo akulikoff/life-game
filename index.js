@@ -1,13 +1,14 @@
+createTable(20, 20);
 var speed = document.getElementById("speed");
 var field = document.getElementById("field");
 field.addEventListener("click", function (e) {
-  if (event.target.classList.contains("game-table-cell")) {
-    event.target.classList.add("cell-life");
+  if (e.target.classList.contains("game-table-cell")) {
+    e.target.classList.add("cell-life");
   }
 });
 field.addEventListener("mousemove", function (e) {
-  if (event.buttons === 1) {
-    event.target.classList.add("cell-life");
+  if (e.buttons === 1) {
+    e.target.classList.add("cell-life");
   }
 });
 function generateRandomNumber() {
@@ -21,6 +22,34 @@ function generateTable() {
   let cols = generateRandomNumber();
   return createTable(rows, cols);
 }
+function playGame(speed) {
+  setInterval(generateNextGeneration(), speed);
+}
+function generateNextGeneration() {
+  // Получение всех ячеек с классом "life"
+  const cells = document.querySelectorAll(".cell-life");
+
+  // Перебор каждой ячейки
+  cells.forEach((cell) => {
+    // Получение координат текущей ячейки
+    const row = cell.parentNode.rowIndex;
+    const col = cell.cellIndex;
+
+    // Получение соседних элементов
+    const neighbors = getNeighbors(cells, row, col);
+
+    // Проверка условий и применение класса "life"
+    if (cell.classList.contains("cell-life")) {
+      if (neighbors.length < 2 || neighbors.length > 3) {
+        cell.classList.remove("cell-life");
+      }
+    } else {
+      if (neighbors.length === 3) {
+        cell.classList.add("cell-life");
+      }
+    }
+  });
+}
 function create2DArray(rows, cols) {
   let array = [];
   for (let i = 0; i < rows; i++) {
@@ -31,19 +60,40 @@ function create2DArray(rows, cols) {
   }
   return array;
 }
+function getNeighbors(array, row, col) {
+  const numRows = array.length;
+  const numCols = array[0].length;
+
+  const neighbors = [];
+
+  // Проверка соседей вокруг элемента
+  for (let i = -1; i <= 1; i++) {
+    for (let j = -1; j <= 1; j++) {
+      // Исключаем элемент самого себя
+      if (i === 0 && j === 0) continue;
+
+      const neighborRow = (row + i + numRows) % numRows; // Определение индекса строки соседа с учетом противоположного края
+      const neighborCol = (col + j + numCols) % numCols; // Определение индекса столбца соседа с учетом противоположного края
+
+      neighbors.push(array[neighborRow][neighborCol]);
+    }
+  }
+
+  return neighbors;
+}
 function handleCreateTable() {
   var width = document.getElementById("width");
   var height = document.getElementById("height");
   var userRows = width.value;
   var userCols = height.value;
-  console.log(userRows, userCols);
   createTable(userRows, userCols);
 }
 function createTable(rows, columns) {
+  if (!rows || !columns || rows <= 0 || columns <= 0) return;
   var field = document.getElementById("field");
   var isExistTable = field !== null;
   if (isExistTable) {
-    var element = document.getElementById("field");
+    var element = field;
     element.parentNode.removeChild(element);
   }
 
@@ -69,7 +119,8 @@ function createTable(rows, columns) {
     // Создаем столбцы
     for (var j = 0; j < columns; j++) {
       var cell = document.createElement("td");
-      cell.classList.add("game-table-cell");
+      cell.className = "game-table-cell cell-" + i + "-" + j;
+
       row.appendChild(cell);
     }
 
