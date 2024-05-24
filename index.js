@@ -169,8 +169,8 @@ function createTable(rows, columns) {
     // Создаем столбцы
     for (var j = 0; j < columns; j++) {
       var cell = document.createElement("td");
-      cell.className = "game-table-cell cell-" + i + "-" + j;
-
+      cell.className = "game-table-cell";
+      cell.id = "cell-" + i + "-" + j;
       row.appendChild(cell);
     }
 
