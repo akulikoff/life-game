@@ -104,7 +104,7 @@ function playGame(event) {
 function stopGame() {
   clearInterval(intervalId);
   field.style.cursor = "pointer";
-  alert(`game over <br> score: ${scoreCounter}`);
+  alert(`game over \nscore: ${scoreCounter}`);
 }
 function generateNextGeneration(field) {
   let result = [];
