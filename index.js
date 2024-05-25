@@ -155,7 +155,6 @@ function generateNextGeneration(field) {
   if (isFinish) {
     stopGame();
   }
-  console.log(result);
   return result;
 }
 function assert(expected, got) {
@@ -173,7 +172,7 @@ function run() {
   fieldData = generateNextGeneration(fieldData);
   fillTable(fieldData);
   scoreCounter++;
-  score.textContent = scoreCounter;
+  score.textContent = "Score: " + scoreCounter;
 }
 
 function handleCreateTable() {
