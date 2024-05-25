@@ -7,20 +7,44 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <h1>Game life</h1>
     <div id="game">
-      <div class="controls">
+      <div id="controls">
         <label for="width">width</label>
-        <input id="width" type="number" min="1" step="1" />
+        <input
+          id="width"
+          type="number"
+          min="1"
+          step="1"
+          title="set field width"
+        />
         <label for="height">height</label>
-        <input id="height" type="number" min="1" step="1" />
-        <button id="create">create</button>
+        <input
+          id="height"
+          type="number"
+          min="1"
+          step="1"
+          title="set field height"
+        />
+        <button id="create" title="create your custom field">create</button>
 
-        <button id="generate">generate</button>
+        <button id="generate" title="generate random live cells">
+          generate
+        </button>
         <label for="speed">speed (ms)</label>
-        <input id="speed" type="number" min="300" step="100" max="10000" />
+        <input
+          id="speed"
+          type="number"
+          min="300"
+          step="100"
+          max="10000"
+          title="set game speed"
+        />
         <button id="start">start</button>
       </div>
       <h2 id="score"></h2>
+      <button id="stop">stop</button>
+      <div id="text"></div>
     </div>
     <script src="index.js"></script>
   </body>

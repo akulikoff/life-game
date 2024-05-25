@@ -1,3 +1,8 @@
+* {
+  margin: 0 auto;
+  box-sizing: border-box;
+  text-align: center;
+}
 #game,
 #game1 {
   display: flex;
@@ -5,7 +10,7 @@
   align-items: center;
   justify-content: center;
 }
-.controls {
+#controls {
   display: flex;
   margin: 20px;
   gap: 5px;

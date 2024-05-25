@@ -6,8 +6,8 @@
 
 провверить создание таблицы (слушатель)
 +удалять слушатели событий после старта
-добавить счётчик очков
-добавить логику остановки игры
++добавить счётчик очков
++добавить логику остановки игры
 
 масштабировать поле 
     минимальные размеры клетки
@@ -16,8 +16,9 @@
 */
 
 // генерация дефолтного поля
-let intervalId;
 createTable(50, 50);
+let intervalId;
+let isPlaying = false;
 var speed = document.getElementById("speed");
 var fieldData;
 var field = document.getElementById("field");
@@ -25,6 +26,9 @@ var width = document.getElementById("width");
 var height = document.getElementById("height");
 var create = document.getElementById("create");
 var score = document.getElementById("score");
+var stop = document.getElementById("stop");
+stop.style.display = "none";
+
 var scoreCounter = 0;
 var prevResultArr = [];
 document.getElementById("start").addEventListener("click", playGame);
@@ -91,7 +95,11 @@ function reGenerateField(field) {
 // запуск игры
 function playGame(event) {
   console.log("start");
+  stop.style.display = "block";
+  stop.addEventListener("click", stopGame);
 
+  isPlaying = true;
+  scoreCounter = 0;
   let v = speed.value;
   if (!v) {
     v = 50;
@@ -104,7 +112,9 @@ function playGame(event) {
 function stopGame() {
   clearInterval(intervalId);
   field.style.cursor = "pointer";
-  alert(`game over \nscore: ${scoreCounter}`);
+  alert(`game over \nscore: ${scoreCounter - 1}`);
+  isPlaying = false;
+  stop.removeEventListener("click", stopGame);
 }
 function generateNextGeneration(field) {
   let result = [];
@@ -152,6 +162,8 @@ function generateNextGeneration(field) {
   }
   let isFinish = assert(prevResultArr, result);
   prevResultArr = result;
+  scoreCounter++;
+  score.textContent = "Score: " + (scoreCounter - 1);
   if (isFinish) {
     stopGame();
   }
@@ -171,14 +183,20 @@ function assert(expected, got) {
 function run() {
   fieldData = generateNextGeneration(fieldData);
   fillTable(fieldData);
-  scoreCounter++;
-  score.textContent = "Score: " + scoreCounter;
 }
 
 function handleCreateTable() {
   var userRows = width.value;
   var userCols = height.value;
+  if (!userRows || !userCols) {
+    alert("введите данные");
+    return;
+  }
   createTable(userRows, userCols);
+  width.value = "";
+  height.value = "";
+  document.getElementById("text").textContent =
+    "Game created, your field size: " + userCols + "x" + userRows;
 }
 function getCellIdByCoords(i, j) {
   return "cell-" + i + "-" + j;
