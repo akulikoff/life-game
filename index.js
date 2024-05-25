@@ -5,7 +5,7 @@
 
 
 провверить создание таблицы (слушатель)
-удалять слушатели событий после старта
++удалять слушатели событий после старта
 добавить счётчик очков
 добавить логику остановки игры
 
@@ -16,45 +16,51 @@
 */
 
 // генерация дефолтного поля
-createTable(50, 50);
+createTable(20, 20);
 var speed = document.getElementById("speed");
 var fieldData;
 var field = document.getElementById("field");
+var width = document.getElementById("width");
+var height = document.getElementById("height");
+var create = document.getElementById("create");
+
 document.getElementById("start").addEventListener("click", playGame);
 document.getElementById("create").addEventListener("click", handleCreateTable);
 document.getElementById("generate").addEventListener("click", reGenerateField);
 
-field.addEventListener(
-  "mouseup",
-  function (e) {
-    if (e.target.classList.contains("game-table-cell")) {
-      e.target.classList.toggle("cell-life");
-      [i, j] = getCoordsById(e.target.id);
-      if (e.target.classList.contains("cell-life")) {
-        fieldData[i][j] = true;
-      } else {
-        fieldData[i][j] = false;
-      }
+function clickLife(e) {
+  if (e.target.classList.contains("game-table-cell")) {
+    e.target.classList.toggle("cell-life");
+    const [i, j] = getCoordsById(e.target.id);
+    if (e.target.classList.contains("cell-life")) {
+      fieldData[i][j] = true;
+    } else {
+      fieldData[i][j] = false;
     }
-  },
-  true
-);
-field.addEventListener(
-  "mousemove",
-  function (e) {
-    if (e.buttons === 1 && e) {
-      e.target.classList.toggle("cell-life");
-      field.classList.remove("cell-life");
-      const [i, j] = getCoordsById(e.target.id);
-      if (e.target.classList.contains("cell-life")) {
-        fieldData[i][j] = true;
-      } else {
-        fieldData[i][j] = false;
-      }
+  }
+}
+function drawLife(e) {
+  if (e.buttons === 1 && e.target.classList.contains("game-table-cell")) {
+    e.target.classList.toggle("cell-life");
+    field.classList.remove("cell-life");
+    const [i, j] = getCoordsById(e.target.id);
+    if (e.target.classList.contains("cell-life")) {
+      fieldData[i][j] = true;
+    } else {
+      fieldData[i][j] = false;
     }
-  },
-  true
-);
+  }
+}
+field.addEventListener("click", clickLife, true);
+field.addEventListener("mousemove", drawLife, true);
+function isDisabledCreatedBtn() {
+  if (userCols > 0 && userRows > 0) {
+    console.log(create);
+    document.getElementById("create").disabled = false;
+  } else {
+    document.getElementById("create").disabled = true;
+  }
+}
 function getCoordsById(id) {
   let temp = id.split("-");
   if (temp.length < 3) {
@@ -69,14 +75,12 @@ function getCoordsById(id) {
 function reGenerateField(field) {
   // TODO
   let result = [];
+  let genx = Math.random(0, field.length - 1);
   for (let i = 0; i < field.length; i++) {
-    result[i] = [];
+    let geny = Math.random(0, field.length[i] - 1);
     for (let j = 0; j < field[i].length; j++) {
-      if (field[i][j]) {
-        result[i][j] = false;
-      } else {
-        result[i][j] = true;
-      }
+      result[genx][geny] = true;
+      console.log(genx, geny);
     }
   }
   return result;
@@ -88,9 +92,13 @@ function playGame(event) {
     v = 50;
   }
   setInterval(run, v);
+  field.removeEventListener("click", clickLife, true);
+  field.removeEventListener("mousemove", drawLife, true);
+  field.style.cursor = "not-allowed";
 }
 function stopGame() {
   clearInterval(speed);
+  field.style.cursor = "pointer";
 }
 function generateNextGeneration(field) {
   let result = [];
@@ -119,6 +127,7 @@ function generateNextGeneration(field) {
     result[i] = [];
     for (let j = 0; j < field[i].length; j++) {
       let current = field[i][j];
+
       let liveNeibors = countLiveNeighbors(i, j);
       if (current) {
         if (liveNeibors == 2 || liveNeibors == 3) {
@@ -135,17 +144,15 @@ function generateNextGeneration(field) {
       }
     }
   }
+
   return result;
 }
 function run() {
   fieldData = generateNextGeneration(fieldData);
-  console.log("sdv");
   fillTable(fieldData);
 }
 
 function handleCreateTable() {
-  var width = document.getElementById("width");
-  var height = document.getElementById("height");
   var userRows = width.value;
   var userCols = height.value;
   createTable(userRows, userCols);
@@ -156,7 +163,7 @@ function getCellIdByCoords(i, j) {
 function fillTable(fieldData) {
   for (var i = 0; i < fieldData.length; i++) {
     for (var j = 0; j < fieldData[i].length; j++) {
-      var cell = document.getElementById(getCellIdByCoords(i, j));
+      let cell = document.getElementById(getCellIdByCoords(i, j));
       if (fieldData[i][j]) {
         cell.classList.add("cell-life");
       } else {
@@ -165,12 +172,25 @@ function fillTable(fieldData) {
     }
   }
 }
+function randomFillTable(fieldData) {
+  for (var i = 0; i < fieldData.length; i++) {
+    console.log(genx, geny);
+    let genx = Math.random(0, field.length - 1);
+    for (var j = 0; j < fieldData[i].length; j++) {
+      let geny = Math.random(0, field.length[i] - 1);
+      console.log(genx, geny);
+      var cell = document.getElementById(getCellIdByCoords(genx, geny));
+
+      cell.classList.add("cell-life");
+    }
+  }
+}
 function createTable(rows, columns) {
   if (!rows || !columns || rows <= 0 || columns <= 0) return;
-  var field = document.getElementById("field");
-  var isExistTable = field !== null;
+  var oldField = document.getElementById("field");
+  var isExistTable = oldField !== null;
   if (isExistTable) {
-    var element = field;
+    var element = oldField;
     element.parentNode.removeChild(element);
   }
 
@@ -179,16 +199,8 @@ function createTable(rows, columns) {
   var table = document.createElement("table");
   document.getElementById("game").appendChild(table);
   table.id = "field";
-  //   table.addEventListener("click", function (e) {
-  //     if (e.target.classList.contains("game-table-cell")) {
-  //       e.target.classList.add("cell-life");
-  //     }
-  //   });
-  //   table.addEventListener("mousemove", function (e) {
-  //     if (e.buttons === 1) {
-  //       e.target.classList.add("cell-life");
-  //     }
-  //   });
+  table.addEventListener("click", clickLife, true);
+  table.addEventListener("mousemove", drawLife, true);
   // Создаем строки
   fieldData = [];
   for (var i = 0; i < rows; i++) {
