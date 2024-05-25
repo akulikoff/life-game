@@ -4,7 +4,7 @@
 +проверить работу выбора скорости
 
 
-провверить создание таблицы (слушатель)
++проверить создание таблицы (слушатель)
 +удалять слушатели событий после старта
 +добавить счётчик очков
 +добавить логику остановки игры
@@ -38,7 +38,7 @@ document.getElementById("generate").addEventListener("click", reGenerateField);
 function clickLife(e) {
   if (e.target.classList.contains("game-table-cell")) {
     e.target.classList.toggle("cell-life");
-    const [i, j] = getCoordsById(e.target.id);
+    [i, j] = getCoordsById(e.target.id);
     if (e.target.classList.contains("cell-life")) {
       fieldData[i][j] = true;
     } else {
@@ -49,8 +49,7 @@ function clickLife(e) {
 function drawLife(e) {
   if (e.buttons === 1 && e.target.classList.contains("game-table-cell")) {
     e.target.classList.toggle("cell-life");
-    // field.classList.remove("cell-life");
-    const [i, j] = getCoordsById(e.target.id);
+    [i, j] = getCoordsById(e.target.id);
     if (e.target.classList.contains("cell-life")) {
       fieldData[i][j] = true;
     } else {
@@ -60,14 +59,7 @@ function drawLife(e) {
 }
 field.addEventListener("click", clickLife, true);
 field.addEventListener("mousemove", drawLife, true);
-function isDisabledCreatedBtn() {
-  if (userCols > 0 && userRows > 0) {
-    console.log(create);
-    document.getElementById("create").disabled = false;
-  } else {
-    document.getElementById("create").disabled = true;
-  }
-}
+
 function getCoordsById(id) {
   let temp = id.split("-");
   if (temp.length < 3) {
