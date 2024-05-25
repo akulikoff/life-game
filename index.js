@@ -16,14 +16,17 @@
 */
 
 // генерация дефолтного поля
-createTable(20, 20);
+let intervalId;
+createTable(50, 50);
 var speed = document.getElementById("speed");
 var fieldData;
 var field = document.getElementById("field");
 var width = document.getElementById("width");
 var height = document.getElementById("height");
 var create = document.getElementById("create");
-
+var score = document.getElementById("score");
+var scoreCounter = 0;
+var prevResultArr = [];
 document.getElementById("start").addEventListener("click", playGame);
 document.getElementById("create").addEventListener("click", handleCreateTable);
 document.getElementById("generate").addEventListener("click", reGenerateField);
@@ -42,7 +45,7 @@ function clickLife(e) {
 function drawLife(e) {
   if (e.buttons === 1 && e.target.classList.contains("game-table-cell")) {
     e.target.classList.toggle("cell-life");
-    field.classList.remove("cell-life");
+    // field.classList.remove("cell-life");
     const [i, j] = getCoordsById(e.target.id);
     if (e.target.classList.contains("cell-life")) {
       fieldData[i][j] = true;
@@ -87,18 +90,21 @@ function reGenerateField(field) {
 }
 // запуск игры
 function playGame(event) {
+  console.log("start");
+
   let v = speed.value;
   if (!v) {
     v = 50;
   }
-  setInterval(run, v);
+  intervalId = setInterval(run, v);
   field.removeEventListener("click", clickLife, true);
   field.removeEventListener("mousemove", drawLife, true);
   field.style.cursor = "not-allowed";
 }
 function stopGame() {
-  clearInterval(speed);
+  clearInterval(intervalId);
   field.style.cursor = "pointer";
+  alert(`game over <br> score: ${scoreCounter}`);
 }
 function generateNextGeneration(field) {
   let result = [];
@@ -144,12 +150,30 @@ function generateNextGeneration(field) {
       }
     }
   }
-
+  let isFinish = assert(prevResultArr, result);
+  prevResultArr = result;
+  if (isFinish) {
+    stopGame();
+  }
+  console.log(result);
   return result;
 }
+function assert(expected, got) {
+  if (expected.length !== got.length) return false;
+  for (let i = 0; i < expected.length; i++) {
+    if (expected[i].length !== got[i].length) return false;
+    for (let j = 0; j < expected[i].length; j++) {
+      if (expected[i][j] !== got[i][j]) return false;
+    }
+  }
+  return true;
+}
+
 function run() {
   fieldData = generateNextGeneration(fieldData);
   fillTable(fieldData);
+  scoreCounter++;
+  score.textContent = scoreCounter;
 }
 
 function handleCreateTable() {
