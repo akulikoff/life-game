@@ -52,6 +52,7 @@ function drawLife(e) {
     [i, j] = getCoordsById(e.target.id);
     if (e.target.classList.contains("cell-life")) {
       fieldData[i][j] = true;
+      console.log(fieldData[i][j]);
     } else {
       fieldData[i][j] = false;
     }
@@ -78,19 +79,19 @@ function reGenerateField(field) {
   for (let i = 0; i < field.length; i++) {
     let geny = Math.random(0, field.length[i] - 1);
     for (let j = 0; j < field[i].length; j++) {
-      result[genx][geny] = true;
+      fieldData[genx][geny] = true;
       console.log(genx, geny);
     }
   }
   return result;
 }
 // запуск игры
-function playGame(event) {
+function playGame(e) {
   console.log("start");
   stop.style.display = "block";
   stop.addEventListener("click", stopGame);
 
-  isPlaying = true;
+  // isPlaying = true;
   scoreCounter = 0;
   let v = speed.value;
   if (!v) {
@@ -208,23 +209,30 @@ function fillTable(fieldData) {
 function randomFillTable() {
   const field = document.getElementsByClassName("game-table-cell");
   const randomCells = [];
-  for (var i = 0; i < field.length; i++) {
-    if (Math.random() > 0.666) {
-      field[i].classList.add("cell-life");
-      let cellId = field[i].id;
-      const lifeCell = getCoordsById(cellId);
-      randomCells.push(lifeCell);
-    }
-  }
-  for (var i = 0; i < field.length; i++) {
-    for (var j = 0; j < field[i].length; j++) {
-      let cell = document.getElementById(getCellIdByCoords(i, j));
-      if (cell.classList.contains("cell-life")) {
-        console.log("life", i, j);
-        field[i][j] = true;
+  let x = document.getElementsByTagName("tr").length;
+  let y = document.getElementsByTagName("td").length / x;
+  console.log("xy", x, y);
+  // randomCells.length = field.length;
+  createTable(x, y);
+  for (var i = 0; i < fieldData.length; i++) {
+    // randomCells[i] = field[i].length;
+    for (var j = 0; j < fieldData[i].length; j++) {
+      if (Math.random() > 0.866) {
+        field[i].classList.add("cell-life");
+        let cellId = field[i].id;
+        const lifeCell = getCoordsById(cellId);
+        randomCells.push(lifeCell);
+        console.log(randomCells);
+        fieldData[i][j] = true;
+      } else {
+        fieldData[i][j] = false;
       }
+      // if (randomCells.includes([i, j])) {
+      //   console.log("life", i, j);
+      // }
     }
   }
+  // for (var i = 0; i < field.length; i++) {}
 }
 
 // for (var i = 0; i < fieldData.length; i++) {
