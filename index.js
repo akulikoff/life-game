@@ -33,7 +33,7 @@ var scoreCounter = 0;
 var prevResultArr = [];
 document.getElementById("start").addEventListener("click", playGame);
 document.getElementById("create").addEventListener("click", handleCreateTable);
-document.getElementById("generate").addEventListener("click", reGenerateField);
+document.getElementById("generate").addEventListener("click", randomFillTable);
 
 function clickLife(e) {
   if (e.target.classList.contains("game-table-cell")) {
@@ -205,19 +205,40 @@ function fillTable(fieldData) {
     }
   }
 }
-function randomFillTable(fieldData) {
-  for (var i = 0; i < fieldData.length; i++) {
-    console.log(genx, geny);
-    let genx = Math.random(0, field.length - 1);
-    for (var j = 0; j < fieldData[i].length; j++) {
-      let geny = Math.random(0, field.length[i] - 1);
-      console.log(genx, geny);
-      var cell = document.getElementById(getCellIdByCoords(genx, geny));
-
-      cell.classList.add("cell-life");
+function randomFillTable() {
+  const field = document.getElementsByClassName("game-table-cell");
+  const randomCells = [];
+  for (var i = 0; i < field.length; i++) {
+    if (Math.random() > 0.666) {
+      field[i].classList.add("cell-life");
+      let cellId = field[i].id;
+      const lifeCell = getCoordsById(cellId);
+      randomCells.push(lifeCell);
+    }
+  }
+  for (var i = 0; i < field.length; i++) {
+    for (var j = 0; j < field[i].length; j++) {
+      let cell = document.getElementById(getCellIdByCoords(i, j));
+      if (cell.classList.contains("cell-life")) {
+        console.log("life", i, j);
+        field[i][j] = true;
+      }
     }
   }
 }
+
+// for (var i = 0; i < fieldData.length; i++) {
+//   console.log(genx, geny);
+//   let genx = Math.random(0, field.length - 1);
+//   for (var j = 0; j < fieldData[i].length; j++) {
+//     let geny = Math.random(0, field.length[i] - 1);
+//     console.log(genx, geny);
+//     var cell = document.getElementById(getCellIdByCoords(genx, geny));
+
+//     cell.classList.add("cell-life");
+//   }
+// }
+
 function createTable(rows, columns) {
   if (!rows || !columns || rows <= 0 || columns <= 0) return;
   var oldField = document.getElementById("field");
