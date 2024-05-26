@@ -31,11 +31,13 @@ stop.style.display = "none";
 
 var scoreCounter = 0;
 var prevResultArr = [];
-document.getElementById("start").addEventListener("click", playGame);
+document.getElementById("start").addEventListener("click", handlePlayGame);
 document.getElementById("create").addEventListener("click", handleCreateTable);
-document.getElementById("generate").addEventListener("click", randomFillTable);
+document
+  .getElementById("generate")
+  .addEventListener("click", handleRandomGenerate);
 
-function clickLife(e) {
+function handleClickLife(e) {
   if (e.target.classList.contains("game-table-cell")) {
     e.target.classList.toggle("cell-life");
     [i, j] = getCoordsById(e.target.id);
@@ -46,7 +48,7 @@ function clickLife(e) {
     }
   }
 }
-function drawLife(e) {
+function handleMove(e) {
   if (e.buttons === 1 && e.target.classList.contains("game-table-cell")) {
     e.target.classList.toggle("cell-life");
     [i, j] = getCoordsById(e.target.id);
@@ -58,8 +60,8 @@ function drawLife(e) {
     }
   }
 }
-field.addEventListener("click", clickLife, true);
-field.addEventListener("mousemove", drawLife, true);
+field.addEventListener("click", handleClickLife, true);
+field.addEventListener("mousemove", handleMove, true);
 
 function getCoordsById(id) {
   let temp = id.split("-");
@@ -86,7 +88,7 @@ function reGenerateField(field) {
   return result;
 }
 // запуск игры
-function playGame(e) {
+function handlePlayGame(e) {
   console.log("start");
   stop.style.display = "block";
   stop.addEventListener("click", stopGame);
@@ -98,8 +100,8 @@ function playGame(e) {
     v = 50;
   }
   intervalId = setInterval(run, v);
-  field.removeEventListener("click", clickLife, true);
-  field.removeEventListener("mousemove", drawLife, true);
+  field.removeEventListener("click", handleClickLife, true);
+  field.removeEventListener("mousemove", handleMove, true);
   field.style.cursor = "not-allowed";
 }
 function stopGame() {
@@ -175,7 +177,7 @@ function assert(expected, got) {
 
 function run() {
   fieldData = generateNextGeneration(fieldData);
-  fillTable(fieldData);
+  renderTable(fieldData);
 }
 
 function handleCreateTable() {
@@ -194,7 +196,7 @@ function handleCreateTable() {
 function getCellIdByCoords(i, j) {
   return "cell-" + i + "-" + j;
 }
-function fillTable(fieldData) {
+function renderTable(fieldData) {
   for (var i = 0; i < fieldData.length; i++) {
     for (var j = 0; j < fieldData[i].length; j++) {
       let cell = document.getElementById(getCellIdByCoords(i, j));
@@ -206,7 +208,7 @@ function fillTable(fieldData) {
     }
   }
 }
-function randomFillTable() {
+function handleRandomGenerate() {
   const field = document.getElementsByClassName("game-table-cell");
   const randomCells = [];
   let x = document.getElementsByTagName("tr").length;
@@ -261,8 +263,8 @@ function createTable(rows, columns) {
   var table = document.createElement("table");
   document.getElementById("game").appendChild(table);
   table.id = "field";
-  table.addEventListener("click", clickLife, true);
-  table.addEventListener("mousemove", drawLife, true);
+  table.addEventListener("click", handleClickLife, true);
+  table.addEventListener("mousemove", handleMove, true);
   // Создаем строки
   fieldData = [];
   for (var i = 0; i < rows; i++) {
