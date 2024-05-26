@@ -1,6 +1,6 @@
 /* TODO
 +реализовать логику подсчёта соседей и переключения класса
- -генерацию случайной расстановки живых
++генерацию случайной расстановки живых
 +проверить работу выбора скорости
 
 
@@ -9,6 +9,9 @@
 +добавить счётчик очков
 +добавить логику остановки игры
 
+-переписать на Class
+-добавить наследование
+-использовать canvas
 масштабировать поле 
     минимальные размеры клетки
     максимальные размеры контейнера поля
@@ -20,7 +23,7 @@ createTable(50, 50);
 let intervalId;
 let isPlaying = false;
 var speed = document.getElementById("speed");
-var fieldData;
+var state;
 var field = document.getElementById("field");
 var width = document.getElementById("width");
 var height = document.getElementById("height");
@@ -42,9 +45,9 @@ function handleClickLife(e) {
     e.target.classList.toggle("cell-life");
     [i, j] = getCoordsById(e.target.id);
     if (e.target.classList.contains("cell-life")) {
-      fieldData[i][j] = true;
+      state[i][j] = true;
     } else {
-      fieldData[i][j] = false;
+      state[i][j] = false;
     }
   }
 }
@@ -53,10 +56,10 @@ function handleMove(e) {
     e.target.classList.toggle("cell-life");
     [i, j] = getCoordsById(e.target.id);
     if (e.target.classList.contains("cell-life")) {
-      fieldData[i][j] = true;
-      console.log(fieldData[i][j]);
+      state[i][j] = true;
+      console.log(state[i][j]);
     } else {
-      fieldData[i][j] = false;
+      state[i][j] = false;
     }
   }
 }
@@ -81,7 +84,7 @@ function reGenerateField(field) {
   for (let i = 0; i < field.length; i++) {
     let geny = Math.random(0, field.length[i] - 1);
     for (let j = 0; j < field[i].length; j++) {
-      fieldData[genx][geny] = true;
+      state[genx][geny] = true;
       console.log(genx, geny);
     }
   }
@@ -176,8 +179,8 @@ function assert(expected, got) {
 }
 
 function run() {
-  fieldData = generateNextGeneration(fieldData);
-  renderTable(fieldData);
+  state = generateNextGeneration(state);
+  renderTable(state);
 }
 
 function handleCreateTable() {
@@ -208,46 +211,24 @@ function renderTable(fieldData) {
     }
   }
 }
-function handleRandomGenerate() {
-  const field = document.getElementsByClassName("game-table-cell");
-  const randomCells = [];
-  let x = document.getElementsByTagName("tr").length;
-  let y = document.getElementsByTagName("td").length / x;
-  console.log("xy", x, y);
-  // randomCells.length = field.length;
-  createTable(x, y);
-  for (var i = 0; i < fieldData.length; i++) {
-    // randomCells[i] = field[i].length;
-    for (var j = 0; j < fieldData[i].length; j++) {
+function genRandom(state) {
+  let result = [];
+  for (let i = 0; i < state.length; i++) {
+    result[i] = [];
+    for (let j = 0; j < state[i].length; j++) {
       if (Math.random() > 0.866) {
-        field[i].classList.add("cell-life");
-        let cellId = field[i].id;
-        const lifeCell = getCoordsById(cellId);
-        randomCells.push(lifeCell);
-        console.log(randomCells);
-        fieldData[i][j] = true;
+        result[i][j] = true;
       } else {
-        fieldData[i][j] = false;
+        result[i][j] = false;
       }
-      // if (randomCells.includes([i, j])) {
-      //   console.log("life", i, j);
-      // }
     }
   }
-  // for (var i = 0; i < field.length; i++) {}
+  return result;
 }
-
-// for (var i = 0; i < fieldData.length; i++) {
-//   console.log(genx, geny);
-//   let genx = Math.random(0, field.length - 1);
-//   for (var j = 0; j < fieldData[i].length; j++) {
-//     let geny = Math.random(0, field.length[i] - 1);
-//     console.log(genx, geny);
-//     var cell = document.getElementById(getCellIdByCoords(genx, geny));
-
-//     cell.classList.add("cell-life");
-//   }
-// }
+function handleRandomGenerate(e) {
+  state = genRandom(state);
+  renderTable(state);
+}
 
 function createTable(rows, columns) {
   if (!rows || !columns || rows <= 0 || columns <= 0) return;
@@ -266,13 +247,13 @@ function createTable(rows, columns) {
   table.addEventListener("click", handleClickLife, true);
   table.addEventListener("mousemove", handleMove, true);
   // Создаем строки
-  fieldData = [];
+  state = [];
   for (var i = 0; i < rows; i++) {
-    fieldData[i] = [];
+    state[i] = [];
     var row = document.createElement("tr");
     // Создаем столбцы
     for (var j = 0; j < columns; j++) {
-      fieldData[i][j] = false;
+      state[i][j] = false;
       var cell = document.createElement("td");
       cell.className = "game-table-cell";
       cell.id = getCellIdByCoords(i, j);

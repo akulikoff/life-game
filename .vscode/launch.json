@@ -7,8 +7,20 @@
     {
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "name": "nodemon",
+      "name": "test",
       "program": "${workspaceFolder}/test.js",
+      "request": "launch",
+      "restart": true,
+      // "runtimeExecutable": "nodemon",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
+
+    {
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "name": "index",
+      "program": "${workspaceFolder}/index.js",
       "request": "launch",
       "restart": true,
       //   "runtimeExecutable": "nodemon",
