@@ -9,7 +9,7 @@
 +добавить счётчик очков
 +добавить логику остановки игры
 
--переписать на Class
++переписать на Class
 -добавить наследование
 -использовать canvas
 масштабировать поле 
@@ -17,19 +17,27 @@
     максимальные размеры контейнера поля
 
 */
-var speed = document.getElementById("speed");
+var speedInput = document.getElementById("speed");
 var field = document.getElementById("field");
 var width = document.getElementById("width");
 var height = document.getElementById("height");
-var create = document.getElementById("create");
+var createBtn = document.getElementById("create");
 var score = document.getElementById("score");
-var stop = document.getElementById("stop");
+var stopBtn = document.getElementById("stop");
+var textContent = document.getElementById("text");
 class Game {
   intervalId;
   state = [];
   scoreCounter = 0;
   prevResultArr = [];
-
+  constructor() {
+    this.create = createBtn;
+    this.stop = stopBtn;
+    this.field = field;
+    this.width = width;
+    this.height = height;
+    this.intervalId = speedInput;
+  }
   handleClickLife(e) {
     if (e.target.classList.contains("game-table-cell")) {
       e.target.classList.toggle("cell-life");
@@ -78,15 +86,17 @@ class Game {
     return result;
   }
   // запуск игры
-  handlePlayGame(e) {
+  handlePlayGame(e, speedInput) {
     console.log("start");
-    stop.style.display = "block";
-    stop.addEventListener("click", this.stopGame.bind(this));
-    let v = speed.value;
-    if (!v) {
-      v = 50;
+    document.getElementById("text").textContent = "";
+    this.scoreCounter = 0;
+    this.stop.style.display = "block";
+    this.stop.addEventListener("click", this.stopGame.bind(this));
+    this.speed = speedInput;
+    if (!this.speed) {
+      this.speed = 50;
     }
-    this.intervalId = setInterval(this.run.bind(this), v);
+    this.intervalId = setInterval(this.run.bind(this), this.speed);
     document
       .getElementById("field")
       .removeEventListener("click", this.handleClickLife.bind(this), true);
@@ -101,7 +111,8 @@ class Game {
     document.getElementById(
       "text"
     ).textContent = `game over \nscore: ${this.scoreCounter}`;
-    stop.removeEventListener("click", this.stopGame.bind(this));
+    this.stop.style.display = "none";
+    this.stop.removeEventListener("click", this.stopGame.bind(this));
   }
 
   generateNextGeneration(field) {
@@ -151,7 +162,7 @@ class Game {
     let isFinish = this.assert(this.prevResultArr, result);
     this.prevResultArr = result;
     this.scoreCounter++;
-    score.textContent = "Score: " + (this.scoreCounter - 1);
+    score.textContent = "Score: " + this.scoreCounter;
     if (isFinish) {
       this.stopGame();
     }
@@ -174,16 +185,16 @@ class Game {
   }
 
   handleCreateTable() {
-    let userRows = this.width.value;
-    let userCols = this.height.value;
+    let userRows = width.value;
+    let userCols = height.value;
     if (!userRows || !userCols) {
       alert("введите данные");
       return;
     }
     this.createTable(userRows, userCols);
-    this.width.value = "";
-    this.height.value = "";
-    document.getElementById("text").textContent =
+    width.value = "";
+    height.value = "";
+    this.text.textContent =
       "Game created, your field size: " + userCols + "x" + userRows;
   }
   getCellIdByCoords(i, j) {
@@ -221,7 +232,7 @@ class Game {
   }
 
   createTable(rows, columns) {
-    stop.style.display = "none";
+    this.stop.style.display = "none";
     if (!rows || !columns || rows <= 0 || columns <= 0) return;
     let oldField = document.getElementById("field");
     let isExistTable = oldField !== null;
@@ -258,8 +269,8 @@ let game = new Game();
 
 // генерация дефолтного поля
 
-game.createTable(20, 20);
-// console.log(game.state);
+game.createTable(20, 30, 1000);
+console.log(game);
 // game.renderTable(game.state);
 
 document
