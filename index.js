@@ -86,7 +86,7 @@ class Game {
     if (!v) {
       v = 50;
     }
-    this.intervalId = setInterval(this.run, v);
+    this.intervalId = setInterval(this.run.bind(this), v);
     document
       .getElementById("field")
       .removeEventListener("click", this.handleClickLife.bind(this), true);
@@ -106,7 +106,7 @@ class Game {
 
   generateNextGeneration(field) {
     let result = [];
-    const countLiveNeighbors = function countLiveNeighbors(x, y) {
+    let countLiveNeighbors = function (x, y) {
       let count = 0;
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
@@ -148,12 +148,12 @@ class Game {
         }
       }
     }
-    let isFinish = assert(prevResultArr, result);
-    prevResultArr = result;
-    scoreCounter++;
-    score.textContent = "Score: " + (scoreCounter - 1);
+    let isFinish = this.assert(this.prevResultArr, result);
+    this.prevResultArr = result;
+    this.scoreCounter++;
+    score.textContent = "Score: " + (this.scoreCounter - 1);
     if (isFinish) {
-      stopGame();
+      this.stopGame();
     }
     return result;
   }
@@ -259,7 +259,7 @@ let game = new Game();
 // генерация дефолтного поля
 
 game.createTable(20, 20);
-console.log(game.state);
+// console.log(game.state);
 // game.renderTable(game.state);
 
 document
