@@ -18,10 +18,8 @@
 
 */
 
-// генерация дефолтного поля
-// createTable(50, 50);
-
 class Game {
+  intervalId;
   state = [];
   scoreCounter = 0;
   prevResultArr = [];
@@ -84,14 +82,11 @@ class Game {
     console.log("start");
     this.stop.style.display = "block";
     this.stop.addEventListener("click", this.stopGame.bind(this));
-
-    // isPlaying = true;
-    // this.scoreCounter = 0;
     let v = speed.value;
     if (!v) {
       v = 50;
     }
-    intervalId = setInterval(this.run, v);
+    this.intervalId = setInterval(this.run, v);
     field.removeEventListener("click", this.handleClickLife.bind(this), true);
     field.removeEventListener("mousemove", this.handleMove.bind(this), true);
     field.style.cursor = "not-allowed";
@@ -99,39 +94,41 @@ class Game {
   stopGame() {
     clearInterval(this.intervalId);
     field.style.cursor = "pointer";
-    alert(`game over \nscore: ${this.scoreCounter - 1}`);
-    // isPlaying = false;
-    stop.removeEventListener("click", this.stopGame.bind(this));
+    document.getElementById(
+      "text"
+    ).textContent = `game over \nscore: ${this.scoreCounter}`;
+    this.stop.removeEventListener("click", this.stopGame.bind(this));
   }
-  countLiveNeighbors(x, y) {
-    let count = 0;
-    for (let i = -1; i <= 1; i++) {
-      for (let j = -1; j <= 1; j++) {
-        if (i === 0 && j === 0) continue;
 
-        let ni = x + i;
-        if (ni < 0) ni = this.state.length - 1;
-        if (ni >= this.state.length) ni = 0;
-
-        let nj = y + j;
-        if (nj < 0) nj = this.state[0].length - 1;
-        if (nj >= this.state[0].length) nj = 0;
-
-        if (this.state[ni][nj]) {
-          count++;
-        }
-      }
-    }
-    return count;
-  }
   generateNextGeneration(field) {
     let result = [];
+    let mycountLiveNeighbors = function countLiveNeighbors(x, y) {
+      let count = 0;
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          if (i === 0 && j === 0) continue;
+
+          let ni = x + i;
+          if (ni < 0) ni = this.state.length - 1;
+          if (ni >= this.state.length) ni = 0;
+
+          let nj = y + j;
+          if (nj < 0) nj = this.state[0].length - 1;
+          if (nj >= this.state[0].length) nj = 0;
+
+          if (this.state[ni][nj]) {
+            count++;
+          }
+        }
+      }
+      return count;
+    };
     for (let i = 0; i < field.length; i++) {
       result[i] = [];
       for (let j = 0; j < field[i].length; j++) {
         let current = field[i][j];
 
-        let liveNeibors = this.countLiveNeighbors(i, j);
+        let liveNeibors = mycountLiveNeighbors(i, j);
         if (current) {
           if (liveNeibors == 2 || liveNeibors == 3) {
             result[i][j] = true;
@@ -253,10 +250,13 @@ class Game {
     }
   }
 }
-let intervalId;
+
 let game = new Game();
+
+// генерация дефолтного поля
+
 game.createTable(20, 20);
-// let isPlaying = false;
+game.renderTable(game.state);
 
 document
   .getElementById("start")
