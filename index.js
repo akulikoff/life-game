@@ -17,19 +17,19 @@
     максимальные размеры контейнера поля
 
 */
-
+var speed = document.getElementById("speed");
+var field = document.getElementById("field");
+var width = document.getElementById("width");
+var height = document.getElementById("height");
+var create = document.getElementById("create");
+var score = document.getElementById("score");
+var stop = document.getElementById("stop");
 class Game {
   intervalId;
   state = [];
   scoreCounter = 0;
   prevResultArr = [];
-  speed = document.getElementById("speed");
-  field = document.getElementById("field");
-  width = document.getElementById("width");
-  height = document.getElementById("height");
-  create = document.getElementById("create");
-  score = document.getElementById("score");
-  stop = document.getElementById("stop");
+
   handleClickLife(e) {
     if (e.target.classList.contains("game-table-cell")) {
       e.target.classList.toggle("cell-life");
@@ -80,43 +80,47 @@ class Game {
   // запуск игры
   handlePlayGame(e) {
     console.log("start");
-    this.stop.style.display = "block";
-    this.stop.addEventListener("click", this.stopGame.bind(this));
+    stop.style.display = "block";
+    stop.addEventListener("click", this.stopGame.bind(this));
     let v = speed.value;
     if (!v) {
       v = 50;
     }
     this.intervalId = setInterval(this.run, v);
-    field.removeEventListener("click", this.handleClickLife.bind(this), true);
-    field.removeEventListener("mousemove", this.handleMove.bind(this), true);
-    field.style.cursor = "not-allowed";
+    document
+      .getElementById("field")
+      .removeEventListener("click", this.handleClickLife.bind(this), true);
+    document
+      .getElementById("field")
+      .removeEventListener("mousemove", this.handleMove.bind(this), true);
+    document.getElementById("field").style.cursor = "not-allowed";
   }
   stopGame() {
     clearInterval(this.intervalId);
-    field.style.cursor = "pointer";
+    document.getElementById("field").style.cursor = "pointer";
     document.getElementById(
       "text"
     ).textContent = `game over \nscore: ${this.scoreCounter}`;
-    this.stop.removeEventListener("click", this.stopGame.bind(this));
+    stop.removeEventListener("click", this.stopGame.bind(this));
   }
 
   generateNextGeneration(field) {
     let result = [];
-    let mycountLiveNeighbors = function countLiveNeighbors(x, y) {
+    const countLiveNeighbors = function countLiveNeighbors(x, y) {
       let count = 0;
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           if (i === 0 && j === 0) continue;
 
           let ni = x + i;
-          if (ni < 0) ni = this.state.length - 1;
-          if (ni >= this.state.length) ni = 0;
+          if (ni < 0) ni = field.length - 1;
+          if (ni >= field.length) ni = 0;
 
           let nj = y + j;
-          if (nj < 0) nj = this.state[0].length - 1;
-          if (nj >= this.state[0].length) nj = 0;
+          if (nj < 0) nj = field[0].length - 1;
+          if (nj >= field[0].length) nj = 0;
 
-          if (this.state[ni][nj]) {
+          if (field[ni][nj]) {
             count++;
           }
         }
@@ -128,7 +132,7 @@ class Game {
       for (let j = 0; j < field[i].length; j++) {
         let current = field[i][j];
 
-        let liveNeibors = mycountLiveNeighbors(i, j);
+        let liveNeibors = countLiveNeighbors(i, j);
         if (current) {
           if (liveNeibors == 2 || liveNeibors == 3) {
             result[i][j] = true;
@@ -144,12 +148,12 @@ class Game {
         }
       }
     }
-    let isFinish = this.assert(this.prevResultArr, result);
-    this.prevResultArr = result;
-    this.scoreCounter++;
-    this.score.textContent = "Score: " + (this.scoreCounter - 1);
+    let isFinish = assert(prevResultArr, result);
+    prevResultArr = result;
+    scoreCounter++;
+    score.textContent = "Score: " + (scoreCounter - 1);
     if (isFinish) {
-      this.stopGame();
+      stopGame();
     }
     return result;
   }
@@ -217,7 +221,7 @@ class Game {
   }
 
   createTable(rows, columns) {
-    this.stop.style.display = "none";
+    stop.style.display = "none";
     if (!rows || !columns || rows <= 0 || columns <= 0) return;
     let oldField = document.getElementById("field");
     let isExistTable = oldField !== null;
@@ -234,7 +238,6 @@ class Game {
     table.addEventListener("click", this.handleClickLife.bind(this), true);
     table.addEventListener("mousemove", this.handleMove.bind(this), true);
     // Создаем строки
-    this.state = [];
     for (let i = 0; i < rows; i++) {
       this.state[i] = [];
       let row = document.createElement("tr");
@@ -256,7 +259,8 @@ let game = new Game();
 // генерация дефолтного поля
 
 game.createTable(20, 20);
-game.renderTable(game.state);
+console.log(game.state);
+// game.renderTable(game.state);
 
 document
   .getElementById("start")
