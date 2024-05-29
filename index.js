@@ -267,6 +267,7 @@ class Game {
     if (rows > 1000 || columns > 1000) return;
     this.field = document.createElement("table");
     document.getElementById("game").appendChild(this.field);
+    let fragment = new DocumentFragment();
     this.field.id = "field";
     this.field.addEventListener("click", this.handleClickLife.bind(this), true);
     this.field.addEventListener("mousemove", this.handleMove.bind(this), true);
@@ -277,15 +278,18 @@ class Game {
       this.state[i] = [];
       let row = document.createElement("tr");
       // Создаем столбцы
+      let rowFragment = new DocumentFragment();
       for (let j = 0; j < columns; j++) {
         this.state[i][j] = false;
         let cell = document.createElement("td");
         cell.className = "game-table-cell";
         cell.id = this.getCellIdByCoords(i, j);
-        row.appendChild(cell);
+        rowFragment.append(cell);
       }
-      this.field.appendChild(row);
+      row.append(rowFragment);
+      fragment.append(row);
     }
+    this.field.appendChild(fragment);
   }
 }
 
