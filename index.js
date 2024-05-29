@@ -64,7 +64,10 @@ class Game {
     // this.field.addEventListener("click", this.handleClickLife.bind(this), true);
     // this.field.addEventListener("mousemove", this.handleMove.bind(this), true);
     this.create.addEventListener("click", this.handleCreateTable.bind(this));
-    this.generate.addEventListener("click", this.genRandom.bind(this));
+    this.generate.addEventListener(
+      "click",
+      this.handleRandomGenerate.bind(this)
+    );
     this.stop.addEventListener("click", this.stopGame.bind(this));
   }
 
@@ -268,6 +271,7 @@ class Game {
     return result;
   }
   handleRandomGenerate(e) {
+    console.log("random", e);
     this.state = this.genRandom(this.state);
     this.renderTable(this.state);
   }
