@@ -63,7 +63,16 @@ class Game {
   }
   bindEvents() {
     this.start.addEventListener("click", this.handlePlayGame.bind(this));
-    // TODO
+    this.dom.field.addEventListener(
+      "click",
+      (this.handleClickLifereference = this.handleClickLife.bind(this)),
+      true
+    );
+    this.dom.field.addEventListener(
+      "mousemove",
+      (this.handleMoveLifereference = this.handleMove.bind(this)),
+      true
+    );
     // this.field.addEventListener("click", this.handleClickLife.bind(this), true);
     // this.field.addEventListener("mousemove", this.handleMove.bind(this), true);
     this.create.addEventListener("click", this.handleCreateTable.bind(this));
@@ -283,16 +292,7 @@ class Game {
     document.getElementById("game").appendChild(this.field);
     let fragment = new DocumentFragment();
     this.field.id = "field";
-    this.field.addEventListener(
-      "click",
-      (this.handleClickLifereference = this.handleClickLife.bind(this)),
-      true
-    );
-    this.field.addEventListener(
-      "mousemove",
-      (this.handleMoveLifereference = this.handleMove.bind(this)),
-      true
-    );
+    this.dom.field = this.field;
     // обнуляем старую таблицу
     this.state = [];
     // Создаем строки
