@@ -23,6 +23,9 @@ class Game {
   state = [];
   scoreCounter = 0;
   prevResultArr = [];
+  that = this;
+  handleClickLifereference;
+  handleMoveLifereference;
   // dom = {
   //   instance,
   //   field: document.getElementById("field"),
@@ -118,12 +121,12 @@ class Game {
     this.intervalId = setInterval(this.run.bind(this), this.speed);
     this.field.removeEventListener(
       "click",
-      this.handleClickLife.bind(this),
+      this.handleClickLifereference,
       true
     );
     this.field.removeEventListener(
       "mousemove",
-      this.handleMove.bind(this),
+      this.handleMoveLifereference,
       true
     );
     this.field.style.cursor = "not-allowed";
@@ -269,8 +272,16 @@ class Game {
     document.getElementById("game").appendChild(this.field);
     let fragment = new DocumentFragment();
     this.field.id = "field";
-    this.field.addEventListener("click", this.handleClickLife.bind(this), true);
-    this.field.addEventListener("mousemove", this.handleMove.bind(this), true);
+    this.field.addEventListener(
+      "click",
+      (this.handleClickLifereference = this.handleClickLife.bind(this)),
+      true
+    );
+    this.field.addEventListener(
+      "mousemove",
+      (this.handleMoveLifereference = this.handleMove.bind(this)),
+      true
+    );
     // обнуляем старую таблицу
     this.state = [];
     // Создаем строки
