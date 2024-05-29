@@ -60,7 +60,7 @@ class Game {
   }
   bindEvents() {
     this.start.addEventListener("click", this.handlePlayGame.bind(this));
-
+    // TODO
     // this.field.addEventListener("click", this.handleClickLife.bind(this), true);
     // this.field.addEventListener("mousemove", this.handleMove.bind(this), true);
     this.create.addEventListener("click", this.handleCreateTable.bind(this));
@@ -108,7 +108,7 @@ class Game {
   // запуск игры
   handlePlayGame(e) {
     console.log("start");
-    this.textContent = "";
+    this.text.textContent = "";
     this.scoreCounter = 0;
     this.stop.style.display = "block";
     this.stop.addEventListener("click", this.stopGame.bind(this));
@@ -133,7 +133,7 @@ class Game {
     this.field.style.cursor = "";
     this.text.textContent = `game over \nscore: ${this.scoreCounter}`;
     this.stop.style.display = "none";
-    this.stop.removeEventListener("click", this.stopGame.bind(this));
+    this.stop.removeEventListener("click", this.stopGame.bind(this), true);
   }
 
   generateNextGeneration(field) {
