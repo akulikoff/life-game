@@ -284,6 +284,7 @@ class Game {
     this.field.addEventListener("click", this.handleClickLife.bind(this), true);
     this.field.addEventListener("mousemove", this.handleMove.bind(this), true);
     // Создаем строки
+    this.state = [];
     for (let i = 0; i < rows; i++) {
       this.state[i] = [];
       let row = document.createElement("tr");
