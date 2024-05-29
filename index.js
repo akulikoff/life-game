@@ -30,13 +30,24 @@ class Game {
   state = [];
   scoreCounter = 0;
   prevResultArr = [];
-  constructor() {
-    this.create = createBtn;
-    this.stop = stopBtn;
-    this.field = field;
+  // dom = {
+  //   instance,
+  //   field: document.getElementById("field"),
+  //   createBtn: document.getElementById("create"),
+  //   widthInput: document.getElementById("width"),
+  //   heightInput: document.getElementById("height"),
+  //   speedInput: document.getElementById("speed"),
+  //   stopBtn: document.getElementById("stop"),
+  //   text: document.getElementById("text"),
+  // }
+  constructor(width, height, speed, field, createBtn, stopBtn) {
     this.width = width;
     this.height = height;
-    this.intervalId = speedInput;
+    this.speed = speed;
+    this.stop = document.getElementById(stopBtn);
+    this.field = document.getElementById(field);
+    this.create = document.getElementById(createBtn);
+    this.text = textContent;
   }
   handleClickLife(e) {
     if (e.target.classList.contains("game-table-cell")) {
@@ -86,17 +97,17 @@ class Game {
     return result;
   }
   // запуск игры
-  handlePlayGame(e, speedInput) {
+  handlePlayGame(e) {
     console.log("start");
     document.getElementById("text").textContent = "";
     this.scoreCounter = 0;
-    this.stop.style.display = "block";
-    this.stop.addEventListener("click", this.stopGame.bind(this));
-    this.speed = speedInput;
-    if (!this.speed) {
-      this.speed = 50;
-    }
-    this.intervalId = setInterval(this.run.bind(this), this.speed);
+    stopBtn.style.display = "block";
+    stopBtn.addEventListener("click", this.stopGame.bind(this));
+    // this.speed = speedInput;
+    // if (!this.speed) {
+    //   this.speed = 50;
+    // }
+    this.intervalId = setInterval(this.run.bind(this));
     document
       .getElementById("field")
       .removeEventListener("click", this.handleClickLife.bind(this), true);
@@ -107,12 +118,10 @@ class Game {
   }
   stopGame() {
     clearInterval(this.intervalId);
-    document.getElementById("field").style.cursor = "pointer";
-    document.getElementById(
-      "text"
-    ).textContent = `game over \nscore: ${this.scoreCounter}`;
-    this.stop.style.display = "none";
-    this.stop.removeEventListener("click", this.stopGame.bind(this));
+    field.style.cursor = "";
+    textContent.textContent = `game over \nscore: ${this.scoreCounter}`;
+    stopBtn.style.display = "none";
+    stopBtn.removeEventListener("click", this.stopGame.bind(this));
   }
 
   generateNextGeneration(field) {
@@ -232,7 +241,7 @@ class Game {
   }
 
   createTable(rows, columns) {
-    this.stop.style.display = "none";
+    stopBtn.style.display = "none";
     if (!rows || !columns || rows <= 0 || columns <= 0) return;
     let oldField = document.getElementById("field");
     let isExistTable = oldField !== null;
@@ -269,7 +278,7 @@ let game = new Game();
 
 // генерация дефолтного поля
 
-game.createTable(20, 30, 1000);
+game.createTable(10, 30, 1000, field, createBtn, stopBtn);
 console.log(game);
 // game.renderTable(game.state);
 
