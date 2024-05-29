@@ -142,7 +142,7 @@ class Game {
   stopGame() {
     clearInterval(this.intervalId);
     this.field.style.cursor = "";
-    this.textContent.textContent = `game over \nscore: ${this.scoreCounter}`;
+    this.text.textContent = `game over \nscore: ${this.scoreCounter}`;
     this.stop.style.display = "none";
     this.stop.removeEventListener("click", this.stopGame.bind(this));
   }
@@ -283,8 +283,9 @@ class Game {
     this.field.id = "field";
     this.field.addEventListener("click", this.handleClickLife.bind(this), true);
     this.field.addEventListener("mousemove", this.handleMove.bind(this), true);
-    // Создаем строки
+    // обнуляем старую таблицу
     this.state = [];
+    // Создаем строки
     for (let i = 0; i < rows; i++) {
       this.state[i] = [];
       let row = document.createElement("tr");
