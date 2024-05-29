@@ -61,9 +61,9 @@ class Game {
     this.bindEvents();
   }
   bindEvents() {
-    this.field.addEventListener("click", (e) => this.handleClickLife(e));
-    this.field.addEventListener("mousemove", (e) => this.handleMove(e));
-    this.create.addEventListener("click", (e) => this.handleCreateTable(e));
+    // this.field.addEventListener("click", (e) => this.handleClickLife(e));
+    field.addEventListener("mousemove", (e) => this.handleMove(e));
+    create.addEventListener("click", (e) => this.handleCreateTable(e));
     this.generate.addEventListener("click", (e) => this.genRandom(e));
     this.stop.addEventListener("click", (e) => this.stopGame(e));
   }
@@ -120,8 +120,8 @@ class Game {
     console.log("start");
     this.textContent = "";
     this.scoreCounter = 0;
-    this.stopBtnId.style.display = "block";
-    this.stopBtnId.addEventListener("click", this.stopGame.bind(this));
+    this.stop.style.display = "block";
+    this.stop.addEventListener("click", this.stopGame.bind(this));
     // this.speed = speedInput;
     if (!this.speed) {
       this.speed = 50;
@@ -143,8 +143,8 @@ class Game {
     clearInterval(this.intervalId);
     field.style.cursor = "";
     textContent.textContent = `game over \nscore: ${this.scoreCounter}`;
-    stopBtnId.style.display = "none";
-    stopBtnId.removeEventListener("click", this.stopGame.bind(this));
+    stop.style.display = "none";
+    stop.removeEventListener("click", this.stopGame.bind(this));
   }
 
   generateNextGeneration(field) {
@@ -217,7 +217,7 @@ class Game {
   }
 
   handleCreateTable(e) {
-    let oldField = this.field;
+    let oldField = field;
     let isExistTable = oldField !== null;
     if (isExistTable) {
       let element = oldField;
@@ -270,7 +270,7 @@ class Game {
   }
 
   createTable(rows, columns) {
-    // this.stop.style.display = "none";
+    this.stop.style.display = "none";
     if (!rows || !columns || rows <= 0 || columns <= 0) return;
 
     if (rows < 0 || columns < 0) return;
@@ -278,8 +278,8 @@ class Game {
     let table = document.createElement("table");
     document.getElementById("game").appendChild(table);
     table.id = "field";
-    table.addEventListener("click", this.handleClickLife.bind(this), true);
-    table.addEventListener("mousemove", this.handleMove.bind(this), true);
+    field.addEventListener("click", this.handleClickLife.bind(this), true);
+    field.addEventListener("mousemove", this.handleMove.bind(this), true);
     // Создаем строки
     for (let i = 0; i < rows; i++) {
       this.state[i] = [];
