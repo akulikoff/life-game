@@ -107,7 +107,7 @@ class Game {
     // if (!this.speed) {
     //   this.speed = 50;
     // }
-    this.intervalId = setInterval(this.run.bind(this));
+    this.intervalId = setInterval(this.run.bind(this), this.speed);
     document
       .getElementById("field")
       .removeEventListener("click", this.handleClickLife.bind(this), true);
@@ -274,11 +274,11 @@ class Game {
   }
 }
 
-let game = new Game();
+let game = new Game(10, 30, 1000, field, createBtn, stopBtn);
 
 // генерация дефолтного поля
 
-game.createTable(10, 30, 1000, field, createBtn, stopBtn);
+game.createTable(10, 20);
 console.log(game);
 // game.renderTable(game.state);
 
