@@ -105,19 +105,6 @@ class Game {
     return [x, y];
   }
 
-  reGenerateField(field) {
-    // TODO
-    let result = [];
-    let genx = Math.random(0, field.length - 1);
-    for (let i = 0; i < field.length; i++) {
-      let geny = Math.random(0, field.length[i] - 1);
-      for (let j = 0; j < field[i].length; j++) {
-        this.state[genx][geny] = true;
-        console.log(genx, geny);
-      }
-    }
-    return result;
-  }
   // запуск игры
   handlePlayGame(e) {
     console.log("start");
@@ -125,7 +112,6 @@ class Game {
     this.scoreCounter = 0;
     this.stop.style.display = "block";
     this.stop.addEventListener("click", this.stopGame.bind(this));
-    // this.speed = speedInput;
     if (!this.speed) {
       this.speed = 50;
     }
@@ -220,21 +206,19 @@ class Game {
   }
 
   handleCreateTable(e) {
+    let userRows = width.value;
+    let userCols = height.value;
+    if (!userRows || !userCols) {
+      alert("введите данные");
+      return;
+    }
     let oldField = this.field;
     let isExistTable = oldField !== null;
     if (isExistTable) {
       let element = oldField;
       element.parentNode.removeChild(element);
     }
-    console.log("width", width);
 
-    let userRows = width.value;
-    let userCols = height.value;
-
-    if (!userRows || !userCols) {
-      alert("введите данные");
-      return;
-    }
     this.createTable(userRows, userCols);
     width.value = "";
     height.value = "";
@@ -271,7 +255,6 @@ class Game {
     return result;
   }
   handleRandomGenerate(e) {
-    console.log("random", e);
     this.state = this.genRandom(this.state);
     this.renderTable(this.state);
   }
