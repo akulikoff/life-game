@@ -26,16 +26,16 @@ class Game {
   that = this;
   handleClickLifereference;
   handleMoveLifereference;
-  // dom = {
-  //   instance,
-  //   field: document.getElementById("field"),
-  //   createBtn: document.getElementById("create"),
-  //   widthInput: document.getElementById("width"),
-  //   heightInput: document.getElementById("height"),
-  //   speedInput: document.getElementById("speed"),
-  //   stopBtn: document.getElementById("stop"),
-  //   text: document.getElementById("text"),
-  // }
+  dom = {
+    // instance,
+    field: document.getElementById("field"),
+    createBtn: document.getElementById("create"),
+    widthInput: document.getElementById("width"),
+    heightInput: document.getElementById("height"),
+    speedInput: document.getElementById("speed"),
+    stopBtn: document.getElementById("stop"),
+    text: document.getElementById("text"),
+  };
   constructor(
     width,
     height,
@@ -110,7 +110,12 @@ class Game {
 
   // запуск игры
   handlePlayGame(e) {
+    e.preventDefault();
     console.log("start");
+    if (+this.dom.speedInput.value > 0) {
+      this.speed = +this.dom.speedInput.value;
+    }
+
     this.text.textContent = "";
     this.scoreCounter = 0;
     this.stop.style.display = "block";
@@ -131,6 +136,12 @@ class Game {
     );
     this.field.style.cursor = "not-allowed";
   }
+  // setSpeed() {
+  //   if (!this.speed) {
+  //     this.speed = this.dom.speedInput.value;
+  //     console.log(this.speed);
+  //   }
+  // }
   stopGame() {
     clearInterval(this.intervalId);
     this.field.style.cursor = "";
@@ -315,6 +326,8 @@ let game = new Game(
   "stop",
   "text"
 );
+document.addEventListener("DOMContentLoaded", () => {
+  game.init();
+});
 
-game.init();
 console.log(game);
