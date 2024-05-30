@@ -17,38 +17,85 @@
     максимальные размеры контейнера поля
 
 */
-var speedInput = document.getElementById("speed");
-var field = document.getElementById("field");
-var width = document.getElementById("width");
-var height = document.getElementById("height");
-var createBtn = document.getElementById("create");
-var score = document.getElementById("score");
-var stopBtn = document.getElementById("stop");
-var textContent = document.getElementById("text");
+
 class Game {
   intervalId;
   state = [];
   scoreCounter = 0;
   prevResultArr = [];
-  // dom = {
-  //   instance,
-  //   field: document.getElementById("field"),
-  //   createBtn: document.getElementById("create"),
-  //   widthInput: document.getElementById("width"),
-  //   heightInput: document.getElementById("height"),
-  //   speedInput: document.getElementById("speed"),
-  //   stopBtn: document.getElementById("stop"),
-  //   text: document.getElementById("text"),
-  // }
-  constructor(width, height, speed, field, createBtn, stopBtn) {
+  that = this;
+  handleClickLifereference;
+  handleMoveLifereference;
+  handleCreateReference;
+  handleRandomGenerateReference;
+  handleStartReference;
+  handleStopReference;
+  dom = {
+    // instance,
+    field: document.getElementById("field"),
+    createBtn: document.getElementById("create"),
+    widthInput: document.getElementById("width"),
+    heightInput: document.getElementById("height"),
+    speedInput: document.getElementById("speed"),
+    stopBtn: document.getElementById("stop"),
+    text: document.getElementById("text"),
+  };
+  constructor(
+    width,
+    height,
+    speed,
+    scoreId,
+    createBtnId,
+    generateBtnId,
+    startBtnId,
+    stopBtnId,
+    textId
+  ) {
     this.width = width;
     this.height = height;
     this.speed = speed;
-    this.stop = document.getElementById(stopBtn);
-    this.field = document.getElementById(field);
-    this.create = document.getElementById(createBtn);
-    this.text = textContent;
+    this.score = document.getElementById(scoreId);
+    this.create = document.getElementById(createBtnId);
+    this.generate = document.getElementById(generateBtnId);
+    this.start = document.getElementById(startBtnId);
+    this.stop = document.getElementById(stopBtnId);
+    this.text = document.getElementById(textId);
   }
+  init() {
+    this.createTable(this.width, this.height);
+    this.bindEvents();
+  }
+  bindEvents() {
+    this.start.addEventListener(
+      "click",
+      (this.handleStartReference = this.handlePlayGame.bind(this))
+    );
+    this.dom.field.addEventListener(
+      "click",
+      (this.handleClickLifereference = this.handleClickLife.bind(this)),
+      true
+    );
+    this.dom.field.addEventListener(
+      "mousemove",
+      (this.handleMoveLifereference = this.handleMove.bind(this)),
+      true
+    );
+
+    this.create.addEventListener(
+      "click",
+      (this.handleCreateReference = this.handleCreateTable.bind(this))
+    );
+    this.generate.addEventListener(
+      "click",
+      (this.handleRandomGenerateReference =
+        this.handleRandomGenerate.bind(this))
+    );
+    this.stop.addEventListener(
+      "click",
+      (this.handleStopReference = this.stopGame.bind(this))
+    );
+  }
+
   handleClickLife(e) {
     if (e.target.classList.contains("game-table-cell")) {
       e.target.classList.toggle("cell-life");
@@ -83,45 +130,56 @@ class Game {
     return [x, y];
   }
 
-  reGenerateField(field) {
-    // TODO
-    let result = [];
-    let genx = Math.random(0, field.length - 1);
-    for (let i = 0; i < field.length; i++) {
-      let geny = Math.random(0, field.length[i] - 1);
-      for (let j = 0; j < field[i].length; j++) {
-        this.state[genx][geny] = true;
-        console.log(genx, geny);
-      }
-    }
-    return result;
-  }
   // запуск игры
   handlePlayGame(e) {
     console.log("start");
-    document.getElementById("text").textContent = "";
+    if (+this.dom.speedInput.value > 0) {
+      this.speed = +this.dom.speedInput.value;
+    }
+
+    this.text.textContent = "";
     this.scoreCounter = 0;
-    stopBtn.style.display = "block";
-    stopBtn.addEventListener("click", this.stopGame.bind(this));
-    // this.speed = speedInput;
-    // if (!this.speed) {
-    //   this.speed = 50;
-    // }
+    this.stop.style.display = "block";
+    if (!this.speed) {
+      this.speed = 50;
+    }
     this.intervalId = setInterval(this.run.bind(this), this.speed);
-    document
-      .getElementById("field")
-      .removeEventListener("click", this.handleClickLife.bind(this), true);
-    document
-      .getElementById("field")
-      .removeEventListener("mousemove", this.handleMove.bind(this), true);
-    document.getElementById("field").style.cursor = "not-allowed";
+    this.field.removeEventListener(
+      "click",
+      this.handleClickLifereference,
+      true
+    );
+    this.field.removeEventListener(
+      "mousemove",
+      this.handleMoveLifereference,
+      true
+    );
+    this.field.style.cursor = "not-allowed";
+    this.create.removeEventListener("click", this.handleCreateReference);
+    this.generate.removeEventListener(
+      "click",
+      this.handleRandomGenerateReference
+    );
+    this.start.removeEventListener("click", this.handleStartReference);
   }
   stopGame() {
     clearInterval(this.intervalId);
-    field.style.cursor = "";
-    textContent.textContent = `game over \nscore: ${this.scoreCounter}`;
-    stopBtn.style.display = "none";
-    stopBtn.removeEventListener("click", this.stopGame.bind(this));
+    this.field.style.cursor = "";
+    this.text.textContent = `game over \nscore: ${this.scoreCounter}`;
+
+    this.create.addEventListener(
+      "click",
+      (this.handleCreateReference = this.handleCreateTable.bind(this))
+    );
+    this.generate.addEventListener(
+      "click",
+      (this.handleRandomGenerateReference =
+        this.handleRandomGenerate.bind(this))
+    );
+    this.start.addEventListener(
+      "click",
+      (this.handleStartReference = this.handleStartReference.bind(this))
+    );
   }
 
   generateNextGeneration(field) {
@@ -193,13 +251,19 @@ class Game {
     this.renderTable(this.state);
   }
 
-  handleCreateTable() {
+  handleCreateTable(e) {
     let userRows = width.value;
     let userCols = height.value;
     if (!userRows || !userCols) {
       alert("введите данные");
       return;
     }
+    let isExistTable = this.field !== null;
+    if (isExistTable) {
+      let element = this.field;
+      element.parentNode.removeChild(element);
+    }
+
     this.createTable(userRows, userCols);
     width.value = "";
     height.value = "";
@@ -241,55 +305,48 @@ class Game {
   }
 
   createTable(rows, columns) {
-    stopBtn.style.display = "none";
+    this.stop.style.display = "none";
     if (!rows || !columns || rows <= 0 || columns <= 0) return;
-    let oldField = document.getElementById("field");
-    let isExistTable = oldField !== null;
-    if (isExistTable) {
-      let element = oldField;
-      element.parentNode.removeChild(element);
-    }
 
     if (rows < 0 || columns < 0) return;
     if (rows > 1000 || columns > 1000) return;
-    let table = document.createElement("table");
-    document.getElementById("game").appendChild(table);
-    table.id = "field";
-    table.addEventListener("click", this.handleClickLife.bind(this), true);
-    table.addEventListener("mousemove", this.handleMove.bind(this), true);
+    this.field = document.createElement("table");
+    document.getElementById("game").appendChild(this.field);
+    let fragment = new DocumentFragment();
+    this.field.id = "field";
+    this.dom.field = this.field;
+    this.state = [];
     // Создаем строки
     for (let i = 0; i < rows; i++) {
       this.state[i] = [];
       let row = document.createElement("tr");
       // Создаем столбцы
+      let rowFragment = new DocumentFragment();
       for (let j = 0; j < columns; j++) {
         this.state[i][j] = false;
         let cell = document.createElement("td");
         cell.className = "game-table-cell";
         cell.id = this.getCellIdByCoords(i, j);
-        row.appendChild(cell);
+        rowFragment.append(cell);
       }
-      table.appendChild(row);
+      row.append(rowFragment);
+      fragment.append(row);
     }
+    this.field.appendChild(fragment);
   }
 }
 
-let game = new Game(10, 30, 1000, field, createBtn, stopBtn);
-
-// генерация дефолтного поля
-
-game.createTable(10, 20);
-console.log(game);
-// game.renderTable(game.state);
-
-document
-  .getElementById("start")
-  .addEventListener("click", game.handlePlayGame.bind(game));
-document
-  .getElementById("create")
-  .addEventListener("click", game.handleCreateTable.bind(game));
-document
-  .getElementById("generate")
-  .addEventListener("click", game.handleRandomGenerate.bind(game));
-// field.addEventListener("click", handleClickLife, true);
-// field.addEventListener("mousemove", handleMove, true);
+let game = new Game(
+  30,
+  30,
+  100,
+  "score",
+  "create",
+  "generate",
+  "start",
+  "stop",
+  "text"
+);
+document.addEventListener("DOMContentLoaded", () => {
+  game.init();
+});
