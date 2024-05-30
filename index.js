@@ -127,6 +127,15 @@ class Renderer {
     this.bindEvent() // TODO: пока пусть тут
   }
 
+  fillCell(i,j,val) {
+    let cell = document.getElementById(this.getCellIdByCoords(i, j));
+    if (val) {
+      cell.classList.add("cell-life");
+    } else {
+      cell.classList.remove("cell-life");
+    }
+  }
+
   getCellIdByCoords(i, j) {
     return "cell-" + i + "-" + j;
   }
@@ -412,12 +421,7 @@ class Game {
   fillCells(fieldData) {
     for (let i = 0; i < fieldData.length; i++) {
       for (let j = 0; j < fieldData[i].length; j++) {
-        let cell = document.getElementById(this.getCellIdByCoords(i, j));
-        if (fieldData[i][j]) {
-          cell.classList.add("cell-life");
-        } else {
-          cell.classList.remove("cell-life");
-        }
+        this.renderer.fillCell(i,j,fieldData[i][j])
       }
     }
   }
