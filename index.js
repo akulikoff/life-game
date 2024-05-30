@@ -39,7 +39,10 @@ class Game {
     heightInput: document.getElementById("height"),
     speedInput: document.getElementById("speed"),
     stopBtn: document.getElementById("stop"),
+    startBtn: document.getElementById("start"),
     text: document.getElementById("text"),
+    score: document.getElementById("score"),
+    generateBtn: document.getElementById("generate"),
   };
   constructor(
     width,
@@ -55,19 +58,19 @@ class Game {
     this.width = width;
     this.height = height;
     this.speed = speed;
-    this.score = document.getElementById(scoreId);
-    this.create = document.getElementById(createBtnId);
-    this.generate = document.getElementById(generateBtnId);
-    this.start = document.getElementById(startBtnId);
-    this.stop = document.getElementById(stopBtnId);
-    this.text = document.getElementById(textId);
+    this.dom.score = document.getElementById(scoreId);
+    this.dom.createBtn = document.getElementById(createBtnId);
+    this.dom.generateBtn = document.getElementById(generateBtnId);
+    this.dom.startBtn = document.getElementById(startBtnId);
+    this.dom.stopBtn = document.getElementById(stopBtnId);
+    this.dom.text = document.getElementById(textId);
   }
   init() {
     this.createTable(this.width, this.height);
     this.bindEvents();
   }
   bindEvents() {
-    this.start.addEventListener(
+    this.dom.startBtn.addEventListener(
       "click",
       (this.references.handleStartReference = this.handlePlayGame.bind(this))
     );
@@ -83,17 +86,17 @@ class Game {
       true
     );
 
-    this.create.addEventListener(
+    this.dom.createBtn.addEventListener(
       "click",
       (this.references.handleCreateReference =
         this.handleCreateTable.bind(this))
     );
-    this.generate.addEventListener(
+    this.dom.generateBtn.addEventListener(
       "click",
       (this.references.handleRandomGenerateReference =
         this.handleRandomGenerate.bind(this))
     );
-    this.stop.addEventListener(
+    this.dom.stopBtn.addEventListener(
       "click",
       (this.references.handleStopReference = this.stopGame.bind(this))
     );
@@ -140,9 +143,9 @@ class Game {
       this.speed = +this.dom.speedInput.value;
     }
 
-    this.text.textContent = "";
+    this.dom.text.textContent = "";
     this.scoreCounter = 0;
-    this.stop.style.display = "block";
+    this.dom.stopBtn.style.display = "block";
     if (!this.speed) {
       this.speed = 50;
     }
@@ -158,15 +161,15 @@ class Game {
       true
     );
     this.field.style.cursor = "not-allowed";
-    this.create.removeEventListener(
+    this.dom.createBtn.removeEventListener(
       "click",
       this.references.handleCreateReference
     );
-    this.generate.removeEventListener(
+    this.dom.generateBtn.removeEventListener(
       "click",
       this.references.handleRandomGenerateReference
     );
-    this.start.removeEventListener(
+    this.dom.startBtn.removeEventListener(
       "click",
       this.references.handleStartReference
     );
@@ -174,19 +177,19 @@ class Game {
   stopGame() {
     clearInterval(this.intervalId);
     this.field.style.cursor = "";
-    this.text.textContent = `game over \nscore: ${this.scoreCounter}`;
+    this.dom.text.textContent = `game over \nscore: ${this.scoreCounter}`;
 
-    this.create.addEventListener(
+    this.dom.createBtn.addEventListener(
       "click",
       (this.references.handleCreateReference =
         this.handleCreateTable.bind(this))
     );
-    this.generate.addEventListener(
+    this.dom.generateBtn.addEventListener(
       "click",
       (this.references.handleRandomGenerateReference =
         this.handleRandomGenerate.bind(this))
     );
-    this.start.addEventListener(
+    this.dom.startBtn.addEventListener(
       "click",
       (this.references.handleStartReference = this.handlePlayGame.bind(this))
     );
@@ -277,7 +280,7 @@ class Game {
     this.createTable(userRows, userCols);
     width.value = "";
     height.value = "";
-    this.text.textContent =
+    this.dom.text.textContent =
       "Game created, your field size: " + userCols + "x" + userRows;
   }
   getCellIdByCoords(i, j) {
@@ -315,7 +318,7 @@ class Game {
   }
 
   createTable(rows, columns) {
-    this.stop.style.display = "none";
+    this.dom.stopBtn.style.display = "none";
     if (!rows || !columns || rows <= 0 || columns <= 0) return;
 
     if (rows < 0 || columns < 0) return;
