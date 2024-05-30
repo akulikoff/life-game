@@ -18,7 +18,18 @@
 
 */
 
-class Renderer {
+class CanvasRenderer {
+  constructor(callbacks) {
+  }
+  createField(rows, columns) {
+
+  }
+  fillCell(i,j,val) {
+
+  }
+}
+
+class DOMRenderer {
   references = {
     handleClickLifereference: null,
     handleMoveLifereference: null,
@@ -98,6 +109,12 @@ class Renderer {
   }
 
   createField(rows, columns) {
+    let isExistTable = this.dom.field !== null;
+    if (isExistTable) {
+      let element = this.dom.field;
+      element.parentNode.removeChild(element);
+    }
+
     this.dom.stopBtn.style.display = "none";
     if (!rows || !columns || rows <= 0 || columns <= 0) return;
 
@@ -167,7 +184,7 @@ class Renderer {
 }
 
 class Game {
-  renderer; // Use interface Renderer
+  fieldRenderer; // Use interface Renderer
   intervalId;
   state = [];
   scoreCounter = 0;
@@ -212,7 +229,7 @@ class Game {
     this.dom.stopBtn = document.getElementById(stopBtnId);
     this.dom.text = document.getElementById(textId);
 
-    this.renderer = new Renderer(this.dom, {
+    this.fieldRenderer = new DOMRenderer(this.dom, {
       SetCell: this.SetCell.bind(this),
     });
   }
@@ -263,8 +280,8 @@ class Game {
       this.speed = 50;
     }
     this.intervalId = setInterval(this.run.bind(this), this.speed);
-    this.renderer.removeHandlers()
-    this.dom.field.style.cursor = "not-allowed";
+    this.fieldRenderer.removeHandlers()
+    this.dom.field.style.cursor = "not-allowed"; // TODO унести в fieldRenderer
     this.dom.createBtn.removeEventListener(
       "click",
       this.references.handleCreateReference
@@ -393,7 +410,7 @@ class Game {
         this.state[i][j] = false;
       }
     }
-    this.renderer.createField(rows, columns)
+    this.fieldRenderer.createField(rows, columns)
   }
 
   handleCreateTable(e) {
@@ -403,17 +420,12 @@ class Game {
       alert("введите данные");
       return;
     }
-    let isExistTable = this.dom.field !== null;
-    if (isExistTable) {
-      let element = this.dom.field;
-      element.parentNode.removeChild(element);
-    }
 
     this.createTable(userRows, userCols);
+
     this.dom.widthInput.value = "";
     this.dom.heightInput.value = "";
-    this.dom.text.textContent =
-      "Game created, your field size: " + userCols + "x" + userRows;
+    this.dom.text.textContent = "Game created, your field size: " + userCols + "x" + userRows;
   }
   getCellIdByCoords(i, j) {
     return "cell-" + i + "-" + j;
@@ -421,7 +433,7 @@ class Game {
   fillCells(fieldData) {
     for (let i = 0; i < fieldData.length; i++) {
       for (let j = 0; j < fieldData[i].length; j++) {
-        this.renderer.fillCell(i,j,fieldData[i][j])
+        this.fieldRenderer.fillCell(i,j,fieldData[i][j])
       }
     }
   }
