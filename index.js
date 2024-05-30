@@ -265,8 +265,8 @@ class Game {
   }
 
   handleCreateTable(e) {
-    let userRows = width.value;
-    let userCols = height.value;
+    let userRows = this.dom.widthInput.value;
+    let userCols = this.dom.heightInput.value;
     if (!userRows || !userCols) {
       alert("введите данные");
       return;
@@ -278,8 +278,8 @@ class Game {
     }
 
     this.createTable(userRows, userCols);
-    width.value = "";
-    height.value = "";
+    this.dom.widthInput.value = "";
+    this.dom.heightInput.value = "";
     this.dom.text.textContent =
       "Game created, your field size: " + userCols + "x" + userRows;
   }
