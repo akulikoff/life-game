@@ -106,26 +106,12 @@ class Game {
   }
 
   handleClickLife(e) {
-    if (e.target.classList.contains("game-table-cell")) {
-      e.target.classList.toggle("cell-life");
-      const [i, j] = this.getCoordsById(e.target.id);
-      if (e.target.classList.contains("cell-life")) {
-        this.state[i][j] = true;
-      } else {
-        this.state[i][j] = false;
-      }
-    }
+    this.clickLife(e.target);
   }
 
   handleMove(e) {
-    if (e.buttons === 1 && e.target.classList.contains("game-table-cell")) {
-      e.target.classList.toggle("cell-life");
-      const [i, j] = this.getCoordsById(e.target.id);
-      if (e.target.classList.contains("cell-life")) {
-        this.state[i][j] = true;
-      } else {
-        this.state[i][j] = false;
-      }
+    if (e.buttons === 1) {
+      this.Move(e.target);
     }
   }
 
@@ -180,8 +166,7 @@ class Game {
   }
   stopGame() {
     clearInterval(this.intervalId);
-    this.field.style.cursor = "";
-    this.dom.text.textContent = `game over \nscore: ${this.scoreCounter}`;
+    1;
 
     this.dom.createBtn.addEventListener(
       "click",
@@ -269,40 +254,6 @@ class Game {
     this.renderTable(this.state);
   }
 
-  handleCreateTable(e) {
-    let userRows = this.dom.widthInput.value;
-    let userCols = this.dom.heightInput.value;
-    if (!userRows || !userCols) {
-      alert("введите данные");
-      return;
-    }
-    let isExistTable = this.field !== null;
-    if (isExistTable) {
-      let element = this.field;
-      element.parentNode.removeChild(element);
-    }
-
-    this.createTable(userRows, userCols);
-    this.dom.widthInput.value = "";
-    this.dom.heightInput.value = "";
-    this.dom.text.textContent =
-      "Game created, your field size: " + userCols + "x" + userRows;
-  }
-  getCellIdByCoords(i, j) {
-    return "cell-" + i + "-" + j;
-  }
-  renderTable(fieldData) {
-    for (let i = 0; i < fieldData.length; i++) {
-      for (let j = 0; j < fieldData[i].length; j++) {
-        let cell = document.getElementById(this.getCellIdByCoords(i, j));
-        if (fieldData[i][j]) {
-          cell.classList.add("cell-life");
-        } else {
-          cell.classList.remove("cell-life");
-        }
-      }
-    }
-  }
   genRandom(st) {
     let result = [];
     for (let i = 0; i < st.length; i++) {
@@ -351,6 +302,62 @@ class Game {
       fragment.append(row);
     }
     this.field.appendChild(fragment);
+  }
+  clickLife(cell) {
+    if (cell.classList.contains("game-table-cell")) {
+      cell.classList.toggle("cell-life");
+      const [i, j] = this.getCoordsById(cell.id);
+      if (cell.classList.contains("cell-life")) {
+        this.state[i][j] = true;
+      } else {
+        this.state[i][j] = false;
+      }
+    }
+  }
+  Move(cell) {
+    if (cell.classList.contains("game-table-cell")) {
+      cell.classList.toggle("cell-life");
+      const [i, j] = this.getCoordsById(cell.id);
+      if (cell.classList.contains("cell-life")) {
+        this.state[i][j] = true;
+      } else {
+        this.state[i][j] = false;
+      }
+    }
+  }
+  handleCreateTable(e) {
+    let userRows = this.dom.widthInput.value;
+    let userCols = this.dom.heightInput.value;
+    if (!userRows || !userCols) {
+      alert("введите данные");
+      return;
+    }
+    let isExistTable = this.field !== null;
+    if (isExistTable) {
+      let element = this.field;
+      element.parentNode.removeChild(element);
+    }
+
+    this.createTable(userRows, userCols);
+    this.dom.widthInput.value = "";
+    this.dom.heightInput.value = "";
+    this.dom.text.textContent =
+      "Game created, your field size: " + userCols + "x" + userRows;
+  }
+  getCellIdByCoords(i, j) {
+    return "cell-" + i + "-" + j;
+  }
+  renderTable(fieldData) {
+    for (let i = 0; i < fieldData.length; i++) {
+      for (let j = 0; j < fieldData[i].length; j++) {
+        let cell = document.getElementById(this.getCellIdByCoords(i, j));
+        if (fieldData[i][j]) {
+          cell.classList.add("cell-life");
+        } else {
+          cell.classList.remove("cell-life");
+        }
+      }
+    }
   }
 }
 
