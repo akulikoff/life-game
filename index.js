@@ -68,6 +68,9 @@ class Game {
   init() {
     this.createTable(this.width, this.height);
     this.bindEvents();
+    this.dom.widthInput.value = this.width;
+    this.dom.heightInput.value = this.height;
+    this.dom.speedInput.value = this.speed;
   }
   bindEvents() {
     this.dom.startBtn.addEventListener(
@@ -303,7 +306,7 @@ class Game {
     for (let i = 0; i < st.length; i++) {
       result[i] = [];
       for (let j = 0; j < st[i].length; j++) {
-        if (Math.random() > 0.866) {
+        if (Math.random() > 0.5) {
           result[i][j] = true;
         } else {
           result[i][j] = false;
@@ -324,7 +327,7 @@ class Game {
     if (rows < 0 || columns < 0) return;
     if (rows > 1000 || columns > 1000) return;
     this.field = document.createElement("table");
-    document.getElementById("game").appendChild(this.field);
+    document.getElementById("game").appendChild(this.field); // todo instance dom
     let fragment = new DocumentFragment();
     this.field.id = "field";
     this.dom.field = this.field;
