@@ -166,8 +166,6 @@ class Game {
   }
   stopGame() {
     clearInterval(this.intervalId);
-    1;
-
     this.dom.createBtn.addEventListener(
       "click",
       (this.references.handleCreateReference =
