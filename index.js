@@ -116,6 +116,7 @@ class Game {
       }
     }
   }
+
   handleMove(e) {
     if (e.buttons === 1 && e.target.classList.contains("game-table-cell")) {
       e.target.classList.toggle("cell-life");
@@ -242,13 +243,7 @@ class Game {
         }
       }
     }
-    let isFinish = this.assert(this.prevResultArr, result);
-    this.prevResultArr = result;
-    this.scoreCounter++;
-    score.textContent = "Score: " + this.scoreCounter;
-    if (isFinish) {
-      this.stopGame();
-    }
+
     return result;
   }
   assert(expected, got) {
@@ -264,6 +259,13 @@ class Game {
 
   run() {
     this.state = this.generateNextGeneration(this.state);
+    let isFinish = this.assert(this.prevResultArr, this.state);
+    this.prevResultArr = this.state;
+    this.scoreCounter++;
+    this.dom.score.textContent = "Score: " + this.scoreCounter;
+    if (isFinish) {
+      this.stopGame();
+    }
     this.renderTable(this.state);
   }
 
