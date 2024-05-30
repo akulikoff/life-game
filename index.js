@@ -24,12 +24,14 @@ class Game {
   scoreCounter = 0;
   prevResultArr = [];
   that = this;
-  handleClickLifereference;
-  handleMoveLifereference;
-  handleCreateReference;
-  handleRandomGenerateReference;
-  handleStartReference;
-  handleStopReference;
+  references = {
+    handleClickLifereference: null,
+    handleMoveLifereference: null,
+    handleCreateReference: null,
+    handleRandomGenerateReference: null,
+    handleStartReference: null,
+    handleStopReference: null,
+  };
   dom = {
     // instance,
     field: document.getElementById("field"),
@@ -68,31 +70,33 @@ class Game {
   bindEvents() {
     this.start.addEventListener(
       "click",
-      (this.handleStartReference = this.handlePlayGame.bind(this))
+      (this.references.handleStartReference = this.handlePlayGame.bind(this))
     );
     this.dom.field.addEventListener(
       "click",
-      (this.handleClickLifereference = this.handleClickLife.bind(this)),
+      (this.references.handleClickLifereference =
+        this.handleClickLife.bind(this)),
       true
     );
     this.dom.field.addEventListener(
       "mousemove",
-      (this.handleMoveLifereference = this.handleMove.bind(this)),
+      (this.references.handleMoveLifereference = this.handleMove.bind(this)),
       true
     );
 
     this.create.addEventListener(
       "click",
-      (this.handleCreateReference = this.handleCreateTable.bind(this))
+      (this.references.handleCreateReference =
+        this.handleCreateTable.bind(this))
     );
     this.generate.addEventListener(
       "click",
-      (this.handleRandomGenerateReference =
+      (this.references.handleRandomGenerateReference =
         this.handleRandomGenerate.bind(this))
     );
     this.stop.addEventListener(
       "click",
-      (this.handleStopReference = this.stopGame.bind(this))
+      (this.references.handleStopReference = this.stopGame.bind(this))
     );
   }
 
@@ -146,21 +150,27 @@ class Game {
     this.intervalId = setInterval(this.run.bind(this), this.speed);
     this.field.removeEventListener(
       "click",
-      this.handleClickLifereference,
+      this.references.handleClickLifereference,
       true
     );
     this.field.removeEventListener(
       "mousemove",
-      this.handleMoveLifereference,
+      this.references.handleMoveLifereference,
       true
     );
     this.field.style.cursor = "not-allowed";
-    this.create.removeEventListener("click", this.handleCreateReference);
+    this.create.removeEventListener(
+      "click",
+      this.references.handleCreateReference
+    );
     this.generate.removeEventListener(
       "click",
-      this.handleRandomGenerateReference
+      this.references.handleRandomGenerateReference
     );
-    this.start.removeEventListener("click", this.handleStartReference);
+    this.start.removeEventListener(
+      "click",
+      this.references.handleStartReference
+    );
   }
   stopGame() {
     clearInterval(this.intervalId);
@@ -169,16 +179,17 @@ class Game {
 
     this.create.addEventListener(
       "click",
-      (this.handleCreateReference = this.handleCreateTable.bind(this))
+      (this.references.handleCreateReference =
+        this.handleCreateTable.bind(this))
     );
     this.generate.addEventListener(
       "click",
-      (this.handleRandomGenerateReference =
+      (this.references.handleRandomGenerateReference =
         this.handleRandomGenerate.bind(this))
     );
     this.start.addEventListener(
       "click",
-      (this.handleStartReference = this.handleStartReference.bind(this))
+      (this.references.handleStartReference = this.handlePlayGame.bind(this))
     );
   }
 
