@@ -26,6 +26,8 @@ class Game {
   that = this;
   handleClickLifereference;
   handleMoveLifereference;
+  handleCreateReference;
+  handleRandomGenerateReference;
   dom = {
     // instance,
     field: document.getElementById("field"),
@@ -73,12 +75,15 @@ class Game {
       (this.handleMoveLifereference = this.handleMove.bind(this)),
       true
     );
-    // this.field.addEventListener("click", this.handleClickLife.bind(this), true);
-    // this.field.addEventListener("mousemove", this.handleMove.bind(this), true);
-    this.create.addEventListener("click", this.handleCreateTable.bind(this));
+
+    this.create.addEventListener(
+      "click",
+      (this.handleCreateReference = this.handleCreateTable.bind(this))
+    );
     this.generate.addEventListener(
       "click",
-      this.handleRandomGenerate.bind(this)
+      (this.handleRandomGenerateReference =
+        this.handleRandomGenerate.bind(this))
     );
     this.stop.addEventListener("click", this.stopGame.bind(this));
   }
@@ -144,6 +149,11 @@ class Game {
       true
     );
     this.field.style.cursor = "not-allowed";
+    this.create.removeEventListener("click", this.handleCreateReference);
+    this.generate.removeEventListener(
+      "click",
+      this.handleRandomGenerateReference
+    );
   }
   // setSpeed() {
   //   if (!this.speed) {
@@ -157,6 +167,15 @@ class Game {
     this.text.textContent = `game over \nscore: ${this.scoreCounter}`;
     this.stop.style.display = "none";
     this.stop.removeEventListener("click", this.stopGame.bind(this), true);
+    this.create.addEventListener(
+      "click",
+      (this.handleCreateReference = this.handleCreateTable.bind(this))
+    );
+    this.generate.addEventListener(
+      "click",
+      (this.handleRandomGenerateReference =
+        this.handleRandomGenerate.bind(this))
+    );
   }
 
   generateNextGeneration(field) {
