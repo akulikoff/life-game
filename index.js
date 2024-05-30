@@ -28,6 +28,8 @@ class Game {
   handleMoveLifereference;
   handleCreateReference;
   handleRandomGenerateReference;
+  handleStartReference;
+  handleStopReference;
   dom = {
     // instance,
     field: document.getElementById("field"),
@@ -64,7 +66,10 @@ class Game {
     this.bindEvents();
   }
   bindEvents() {
-    this.start.addEventListener("click", this.handlePlayGame.bind(this));
+    this.start.addEventListener(
+      "click",
+      (this.handleStartReference = this.handlePlayGame.bind(this))
+    );
     this.dom.field.addEventListener(
       "click",
       (this.handleClickLifereference = this.handleClickLife.bind(this)),
@@ -85,7 +90,10 @@ class Game {
       (this.handleRandomGenerateReference =
         this.handleRandomGenerate.bind(this))
     );
-    this.stop.addEventListener("click", this.stopGame.bind(this));
+    this.stop.addEventListener(
+      "click",
+      (this.handleStopReference = this.stopGame.bind(this))
+    );
   }
 
   handleClickLife(e) {
@@ -124,7 +132,6 @@ class Game {
 
   // запуск игры
   handlePlayGame(e) {
-    e.preventDefault();
     console.log("start");
     if (+this.dom.speedInput.value > 0) {
       this.speed = +this.dom.speedInput.value;
@@ -133,7 +140,6 @@ class Game {
     this.text.textContent = "";
     this.scoreCounter = 0;
     this.stop.style.display = "block";
-    this.stop.addEventListener("click", this.stopGame.bind(this));
     if (!this.speed) {
       this.speed = 50;
     }
@@ -154,19 +160,13 @@ class Game {
       "click",
       this.handleRandomGenerateReference
     );
+    this.start.removeEventListener("click", this.handleStartReference);
   }
-  // setSpeed() {
-  //   if (!this.speed) {
-  //     this.speed = this.dom.speedInput.value;
-  //     console.log(this.speed);
-  //   }
-  // }
   stopGame() {
     clearInterval(this.intervalId);
     this.field.style.cursor = "";
     this.text.textContent = `game over \nscore: ${this.scoreCounter}`;
-    this.stop.style.display = "none";
-    this.stop.removeEventListener("click", this.stopGame.bind(this), true);
+
     this.create.addEventListener(
       "click",
       (this.handleCreateReference = this.handleCreateTable.bind(this))
@@ -175,6 +175,10 @@ class Game {
       "click",
       (this.handleRandomGenerateReference =
         this.handleRandomGenerate.bind(this))
+    );
+    this.start.addEventListener(
+      "click",
+      (this.handleStartReference = this.handleStartReference.bind(this))
     );
   }
 
