@@ -141,6 +141,20 @@ class Renderer {
 
     return [x, y];
   }
+
+  removeHandlers() {
+
+    this.dom.field.removeEventListener(
+        "click",
+        this.references.handleClickLifereference,
+        true
+    );
+    this.dom.field.removeEventListener(
+        "mousemove",
+        this.references.handleMoveLifereference,
+        true
+    );
+  }
 }
 
 class Game {
@@ -150,8 +164,6 @@ class Game {
   scoreCounter = 0;
   prevResultArr = [];
   references = {
-    handleClickLifereference: null,
-    handleMoveLifereference: null,
     handleCreateReference: null,
     handleRandomGenerateReference: null,
     handleStartReference: null,
@@ -242,16 +254,7 @@ class Game {
       this.speed = 50;
     }
     this.intervalId = setInterval(this.run.bind(this), this.speed);
-    this.dom.field.removeEventListener(
-      "click",
-      this.references.handleClickLifereference,
-      true
-    );
-    this.dom.field.removeEventListener(
-      "mousemove",
-      this.references.handleMoveLifereference,
-      true
-    );
+    this.renderer.removeHandlers()
     this.dom.field.style.cursor = "not-allowed";
     this.dom.createBtn.removeEventListener(
       "click",
@@ -351,7 +354,7 @@ class Game {
     if (isFinish) {
       this.stopGame();
     }
-    this.drawCells(this.state);
+    this.fillCells(this.state);
   }
 
   genRandom(st) {
@@ -370,12 +373,10 @@ class Game {
   }
   handleRandomGenerate(e) {
     this.state = this.genRandom(this.state);
-    this.drawCells(this.state);
+    this.fillCells(this.state);
   }
 
   createTable(rows, columns) {
-    this.renderer.createField(rows, columns)
-
     this.state = [];
     for (let i = 0; i < rows; i++) {
       this.state[i] = [];
@@ -383,6 +384,7 @@ class Game {
         this.state[i][j] = false;
       }
     }
+    this.renderer.createField(rows, columns)
   }
 
   handleCreateTable(e) {
@@ -407,7 +409,7 @@ class Game {
   getCellIdByCoords(i, j) {
     return "cell-" + i + "-" + j;
   }
-  drawCells(fieldData) {
+  fillCells(fieldData) {
     for (let i = 0; i < fieldData.length; i++) {
       for (let j = 0; j < fieldData[i].length; j++) {
         let cell = document.getElementById(this.getCellIdByCoords(i, j));
