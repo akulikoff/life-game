@@ -258,10 +258,9 @@ class Game {
       alert("введите данные");
       return;
     }
-    let oldField = this.field;
-    let isExistTable = oldField !== null;
+    let isExistTable = this.field !== null;
     if (isExistTable) {
-      let element = oldField;
+      let element = this.field;
       element.parentNode.removeChild(element);
     }
 
@@ -316,7 +315,6 @@ class Game {
     let fragment = new DocumentFragment();
     this.field.id = "field";
     this.dom.field = this.field;
-    // обнуляем старую таблицу
     this.state = [];
     // Создаем строки
     for (let i = 0; i < rows; i++) {
@@ -352,5 +350,3 @@ let game = new Game(
 document.addEventListener("DOMContentLoaded", () => {
   game.init();
 });
-
-console.log(game);
