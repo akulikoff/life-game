@@ -23,7 +23,6 @@ class Game {
   state = [];
   scoreCounter = 0;
   prevResultArr = [];
-  that = this;
   references = {
     handleClickLifereference: null,
     handleMoveLifereference: null,
