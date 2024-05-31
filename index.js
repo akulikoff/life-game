@@ -27,37 +27,25 @@ class CanvasRenderer {
   fillCell(i,j,val) {
 
   }
+  removeHandlers() {
+
+  }
 }
 
 class DOMRenderer {
   references = {
     handleClickLifereference: null,
     handleMoveLifereference: null,
-    handleCreateReference: null,
-    handleRandomGenerateReference: null,
-    handleStartReference: null,
-    handleStopReference: null,
   };
   dom = {
-    // instance,
     field: null,
-    createBtn: null,
-    widthInput: null,
-    heightInput: null,
-    speedInput: null,
-    stopBtn: null,
-    startBtn: null,
-    text: null,
-    score: null,
-    generateBtn: null,
   };
   callbacks = {
-    SetCell: null
+    setCell: null
   }
-  constructor(dom, callbacks) {
-    this.dom = dom
-    this.callbacks = callbacks
-    this.dom.field = document.getElementById("field") // TODO: принимать dom_id из конструктора, наверное
+  constructor(fieldId, setCell) {
+    this.callbacks.setCell = setCell
+    this.dom.field = document.getElementById(fieldId)
   }
 
   bindEvent() {
@@ -86,7 +74,7 @@ class DOMRenderer {
       if (cell.classList.contains("cell-life")) {
         state = true;
       }
-      this.callbacks.SetCell(i,j,state)
+      this.callbacks.setCell(i,j,state)
     }
   }
 
@@ -104,7 +92,7 @@ class DOMRenderer {
       if (cell.classList.contains("cell-life")) {
         state = true;
       }
-      this.callbacks.SetCell(i,j,state)
+      this.callbacks.setCell(i,j,state)
     }
   }
 
@@ -115,7 +103,7 @@ class DOMRenderer {
       element.parentNode.removeChild(element);
     }
 
-    this.dom.stopBtn.style.display = "none";
+    // this.dom.stopBtn.style.display = "none"; // TODO
     if (!rows || !columns || rows <= 0 || columns <= 0) return;
 
     if (rows < 0 || columns < 0) return;
@@ -169,7 +157,6 @@ class DOMRenderer {
   }
 
   removeHandlers() {
-
     this.dom.field.removeEventListener(
         "click",
         this.references.handleClickLifereference,
@@ -184,7 +171,7 @@ class DOMRenderer {
 }
 
 class Game {
-  fieldRenderer; // Use interface Renderer
+  fieldRenderer = new DOMRenderer(); // Use interface Renderer
   intervalId;
   state = [];
   scoreCounter = 0;
@@ -229,11 +216,9 @@ class Game {
     this.dom.stopBtn = document.getElementById(stopBtnId);
     this.dom.text = document.getElementById(textId);
 
-    this.fieldRenderer = new DOMRenderer(this.dom, {
-      SetCell: this.SetCell.bind(this),
-    });
+    this.fieldRenderer = new DOMRenderer("field", this.setCell.bind(this));
   }
-  SetCell(i,j,val) {
+  setCell(i, j, val) {
     this.state[i][j] = val
   }
 
@@ -272,16 +257,16 @@ class Game {
     if (+this.dom.speedInput.value > 0) {
       this.speed = +this.dom.speedInput.value;
     }
-
     this.dom.text.textContent = "";
     this.scoreCounter = 0;
     this.dom.stopBtn.style.display = "block";
     if (!this.speed) {
       this.speed = 50;
     }
+
     this.intervalId = setInterval(this.run.bind(this), this.speed);
     this.fieldRenderer.removeHandlers()
-    this.dom.field.style.cursor = "not-allowed"; // TODO унести в fieldRenderer
+    // this.dom.field.style.cursor = "not-allowed"; // TODO унести в fieldRenderer
     this.dom.createBtn.removeEventListener(
       "click",
       this.references.handleCreateReference
@@ -426,9 +411,6 @@ class Game {
     this.dom.widthInput.value = "";
     this.dom.heightInput.value = "";
     this.dom.text.textContent = "Game created, your field size: " + userCols + "x" + userRows;
-  }
-  getCellIdByCoords(i, j) {
-    return "cell-" + i + "-" + j;
   }
   fillCells(fieldData) {
     for (let i = 0; i < fieldData.length; i++) {
