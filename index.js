@@ -20,6 +20,11 @@
 
 class CanvasRenderer {
   canvas;
+  ctx;
+  field = {
+    width: 0,
+    height: 0,
+  }
   constructor(fieldId, setCell) {
     this.setCell = setCell
     this.canvas = document.getElementById(fieldId)
@@ -32,19 +37,29 @@ class CanvasRenderer {
   }
   createField(rows, columns) {
     this.cellSize = this.calcCellSize(rows, columns, this.canvas.width, this.canvas.height)
+    this.field.width = rows * this.cellSize + 2
+    this.field.height = columns * this.cellSize + 2
 
-    const ctx = this.canvas.getContext("2d"); //TODO: Можно ли ctx положить в свойство класса
-    const colors = ['red', 'black']
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < columns; j++) {
-        const coords = this.getCellCoords(i, j, this.cellSize, this.cellSize)
+    this.ctx = this.canvas.getContext("2d");
 
-        ctx.fillStyle = colors[(i+j)%colors.length];
-        ctx.fillRect(coords.x, coords.y, this.cellSize, this.cellSize);
-      }
-    }
+    this.ctx.strokeStyle = 'blue';
+    this.ctx.lineWidth = 1;
+    this.ctx.strokeRect(0, 0, this.field.width, this.field.height);
+
+  //   const colors = ['red', 'black']
+  //   for (let i = 0; i < rows; i++) {
+  //     for (let j = 0; j < columns; j++) {
+  //       const coords = this.getCellCoords(i, j, this.cellSize, this.cellSize)
+  //
+  //       this.ctx.fillStyle = colors[(i+j)%colors.length];
+  //       this.ctx.fillRect(coords.x, coords.y, this.cellSize, this.cellSize);
+  //     }
+  //   }
   }
 
+  fillCell(i,j,val) {
+
+  }
   removeHandlers() {
 
   }
@@ -54,11 +69,10 @@ class CanvasRenderer {
     return 17
   }
 
-  // TODO: нужные тесты
   getCellCoords(i, j, cellWidth, cellHeight){
     let x = i * cellWidth
     let y = j * cellHeight
-    return {x:x, y:y}
+    return {x:x+1, y:y+1}
   }
 }
 
