@@ -19,16 +19,46 @@
 */
 
 class CanvasRenderer {
-  constructor(callbacks) {
+  canvas;
+  constructor(fieldId, setCell) {
+    this.setCell = setCell
+    this.canvas = document.getElementById(fieldId)
+    const val = Math.min(innerWidth - 2, innerHeight - 130)
+    this.canvas.width = val
+    this.canvas.height = val
+  }
+  init() {
+
   }
   createField(rows, columns) {
+    this.cellSize = this.calcCellSize(rows, columns, this.canvas.width, this.canvas.height)
 
-  }
-  fillCell(i,j,val) {
+    const ctx = this.canvas.getContext("2d"); //TODO: Можно ли ctx положить в свойство класса
 
+    const colors = ['red', 'white']
+    let cnt = 0
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < columns; j++) {
+        cnt++
+        const coords = this.getCellCoords(i, j, this.canvas.width, this.canvas.height)
+        ctx.fillStyle = colors[cnt%colors.length];
+        ctx.fillRect(coords.x, coords.y, this.cellSize, this.cellSize);
+      }
+    }
   }
+
   removeHandlers() {
 
+  }
+
+  // TODO: реализовать и написать тесты
+  calcCellSize(rows, columns, width, height) {
+    return 17
+  }
+
+  // TODO: нужные тесты
+  getCellCoords(i, j, size, width, height){
+    return 0
   }
 }
 
@@ -43,9 +73,14 @@ class DOMRenderer {
   callbacks = {
     setCell: null
   }
+
   constructor(fieldId, setCell) {
     this.callbacks.setCell = setCell
     this.dom.field = document.getElementById(fieldId)
+  }
+
+  init() {
+
   }
 
   bindEvent() {
@@ -171,7 +206,7 @@ class DOMRenderer {
 }
 
 class Game {
-  fieldRenderer = new DOMRenderer(); // Use interface Renderer
+  fieldRenderer;// = new CanvasRenderer(); // Use interface Renderer
   intervalId;
   state = [];
   scoreCounter = 0;
@@ -216,13 +251,14 @@ class Game {
     this.dom.stopBtn = document.getElementById(stopBtnId);
     this.dom.text = document.getElementById(textId);
 
-    this.fieldRenderer = new DOMRenderer("field", this.setCell.bind(this));
+    this.fieldRenderer = new CanvasRenderer("canv-field", this.setCell.bind(this));
   }
   setCell(i, j, val) {
     this.state[i][j] = val
   }
 
   init() {
+    this.fieldRenderer.init();
     this.createTable(this.width, this.height);
     this.bindEvents();
     this.dom.widthInput.value = this.width;
@@ -421,17 +457,17 @@ class Game {
   }
 }
 
-let game = new Game(
-  30,
-  30,
-  100,
-  "score",
-  "create",
-  "generate",
-  "start",
-  "stop",
-  "text"
-);
 document.addEventListener("DOMContentLoaded", () => {
+  let game = new Game(
+      50,
+      50,
+      100,
+      "score",
+      "create",
+      "generate",
+      "start",
+      "stop",
+      "text"
+  );
   game.init();
 });
