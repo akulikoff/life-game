@@ -18,14 +18,165 @@
 
 */
 
+class CanvasRenderer {
+  constructor(callbacks) {
+  }
+  createField(rows, columns) {
+
+  }
+  fillCell(i,j,val) {
+
+  }
+  removeHandlers() {
+
+  }
+}
+
+class DOMRenderer {
+  references = {
+    handleClickLifereference: null,
+    handleMoveLifereference: null,
+  };
+  dom = {
+    field: null,
+  };
+  callbacks = {
+    setCell: null
+  }
+  constructor(fieldId, setCell) {
+    this.callbacks.setCell = setCell
+    this.dom.field = document.getElementById(fieldId)
+  }
+
+  bindEvent() {
+    this.dom.field.addEventListener(
+        "click",
+        (this.references.handleClickLifereference =
+            this.handleClickCell.bind(this)),
+        true
+    );
+    this.dom.field.addEventListener(
+        "mousemove",
+        (this.references.handleMoveLifereference = this.handleMove.bind(this)),
+        true
+    );
+  }
+
+  handleClickCell(e) {
+    this.clickLife(e.target)
+  }
+
+  clickLife(cell) {
+    if (cell.classList.contains("game-table-cell")) {
+      cell.classList.toggle("cell-life");
+      const [i, j] = this.getCoordsById(cell.id);
+      let state = false
+      if (cell.classList.contains("cell-life")) {
+        state = true;
+      }
+      this.callbacks.setCell(i,j,state)
+    }
+  }
+
+  handleMove(e) {
+    if (e.buttons === 1) {
+      this.Move(e.target);
+    }
+  }
+
+  Move(cell) {
+    if (cell.classList.contains("game-table-cell")) {
+      cell.classList.toggle("cell-life");
+      const [i, j] = this.getCoordsById(cell.id);
+      let state = false
+      if (cell.classList.contains("cell-life")) {
+        state = true;
+      }
+      this.callbacks.setCell(i,j,state)
+    }
+  }
+
+  createField(rows, columns) {
+    let isExistTable = this.dom.field !== null;
+    if (isExistTable) {
+      let element = this.dom.field;
+      element.parentNode.removeChild(element);
+    }
+
+    // this.dom.stopBtn.style.display = "none"; // TODO
+    if (!rows || !columns || rows <= 0 || columns <= 0) return;
+
+    if (rows < 0 || columns < 0) return;
+    if (rows > 1000 || columns > 1000) return;
+    this.dom.field = document.createElement("table");
+    document.getElementById("game").appendChild(this.dom.field); // todo instance dom
+    let fragment = new DocumentFragment();
+    this.dom.field.id = "field";
+    // Создаем строки
+    for (let i = 0; i < rows; i++) {
+      let row = document.createElement("tr");
+      // Создаем столбцы
+      let rowFragment = new DocumentFragment();
+      for (let j = 0; j < columns; j++) {
+        let cell = document.createElement("td");
+        cell.className = "game-table-cell";
+        cell.id = this.getCellIdByCoords(i, j);
+        rowFragment.append(cell);
+      }
+      row.append(rowFragment);
+      fragment.append(row);
+    }
+    this.dom.field.appendChild(fragment);
+
+
+    this.bindEvent() // TODO: пока пусть тут
+  }
+
+  fillCell(i,j,val) {
+    let cell = document.getElementById(this.getCellIdByCoords(i, j));
+    if (val) {
+      cell.classList.add("cell-life");
+    } else {
+      cell.classList.remove("cell-life");
+    }
+  }
+
+  getCellIdByCoords(i, j) {
+    return "cell-" + i + "-" + j;
+  }
+
+  getCoordsById(id) {
+    let temp = id.split("-");
+    if (temp.length < 3) {
+      console.error("неверный ID");
+    }
+    let x = temp[1];
+    let y = temp[2];
+
+    return [x, y];
+  }
+
+  removeHandlers() {
+    this.dom.field.removeEventListener(
+        "click",
+        this.references.handleClickLifereference,
+        true
+    );
+    this.dom.field.removeEventListener(
+        "mousemove",
+        this.references.handleMoveLifereference,
+        true
+    );
+  }
+}
+
 class Game {
+  fieldRenderer = new DOMRenderer(); // Use interface Renderer
   intervalId;
   state = [];
   scoreCounter = 0;
   prevResultArr = [];
   references = {
-    handleClickLifereference: null,
-    handleMoveLifereference: null,
     handleCreateReference: null,
     handleRandomGenerateReference: null,
     handleStartReference: null,
@@ -33,7 +184,6 @@ class Game {
   };
   dom = {
     // instance,
-    field: document.getElementById("field"),
     createBtn: document.getElementById("create"),
     widthInput: document.getElementById("width"),
     heightInput: document.getElementById("height"),
@@ -58,13 +208,20 @@ class Game {
     this.width = width;
     this.height = height;
     this.speed = speed;
+
     this.dom.score = document.getElementById(scoreId);
     this.dom.createBtn = document.getElementById(createBtnId);
     this.dom.generateBtn = document.getElementById(generateBtnId);
     this.dom.startBtn = document.getElementById(startBtnId);
     this.dom.stopBtn = document.getElementById(stopBtnId);
     this.dom.text = document.getElementById(textId);
+
+    this.fieldRenderer = new DOMRenderer("field", this.setCell.bind(this));
   }
+  setCell(i, j, val) {
+    this.state[i][j] = val
+  }
+
   init() {
     this.createTable(this.width, this.height);
     this.bindEvents();
@@ -76,17 +233,6 @@ class Game {
     this.dom.startBtn.addEventListener(
       "click",
       (this.references.handleStartReference = this.handlePlayGame.bind(this))
-    );
-    this.dom.field.addEventListener(
-      "click",
-      (this.references.handleClickLifereference =
-        this.handleClickLife.bind(this)),
-      true
-    );
-    this.dom.field.addEventListener(
-      "mousemove",
-      (this.references.handleMoveLifereference = this.handleMove.bind(this)),
-      true
     );
 
     this.dom.createBtn.addEventListener(
@@ -105,52 +251,22 @@ class Game {
     );
   }
 
-  handleClickLife(e) {
-    this.clickLife(e.target);
-  }
-
-  handleMove(e) {
-    if (e.buttons === 1) {
-      this.Move(e.target);
-    }
-  }
-
-  getCoordsById(id) {
-    let temp = id.split("-");
-    if (temp.length < 3) {
-      console.error("неверный ID");
-    }
-    let x = temp[1];
-    let y = temp[2];
-
-    return [x, y];
-  }
-
   // запуск игры
   handlePlayGame(e) {
     console.log("start");
     if (+this.dom.speedInput.value > 0) {
       this.speed = +this.dom.speedInput.value;
     }
-
     this.dom.text.textContent = "";
     this.scoreCounter = 0;
     this.dom.stopBtn.style.display = "block";
     if (!this.speed) {
       this.speed = 50;
     }
+
     this.intervalId = setInterval(this.run.bind(this), this.speed);
-    this.field.removeEventListener(
-      "click",
-      this.references.handleClickLifereference,
-      true
-    );
-    this.field.removeEventListener(
-      "mousemove",
-      this.references.handleMoveLifereference,
-      true
-    );
-    this.field.style.cursor = "not-allowed";
+    this.fieldRenderer.removeHandlers()
+    // this.dom.field.style.cursor = "not-allowed"; // TODO унести в fieldRenderer
     this.dom.createBtn.removeEventListener(
       "click",
       this.references.handleCreateReference
@@ -249,7 +365,7 @@ class Game {
     if (isFinish) {
       this.stopGame();
     }
-    this.renderTable(this.state);
+    this.fillCells(this.state);
   }
 
   genRandom(st) {
@@ -268,61 +384,20 @@ class Game {
   }
   handleRandomGenerate(e) {
     this.state = this.genRandom(this.state);
-    this.renderTable(this.state);
+    this.fillCells(this.state);
   }
 
   createTable(rows, columns) {
-    this.dom.stopBtn.style.display = "none";
-    if (!rows || !columns || rows <= 0 || columns <= 0) return;
-
-    if (rows < 0 || columns < 0) return;
-    if (rows > 1000 || columns > 1000) return;
-    this.field = document.createElement("table");
-    document.getElementById("game").appendChild(this.field); // todo instance dom
-    let fragment = new DocumentFragment();
-    this.field.id = "field";
-    this.dom.field = this.field;
     this.state = [];
-    // Создаем строки
     for (let i = 0; i < rows; i++) {
       this.state[i] = [];
-      let row = document.createElement("tr");
-      // Создаем столбцы
-      let rowFragment = new DocumentFragment();
       for (let j = 0; j < columns; j++) {
         this.state[i][j] = false;
-        let cell = document.createElement("td");
-        cell.className = "game-table-cell";
-        cell.id = this.getCellIdByCoords(i, j);
-        rowFragment.append(cell);
-      }
-      row.append(rowFragment);
-      fragment.append(row);
-    }
-    this.field.appendChild(fragment);
-  }
-  clickLife(cell) {
-    if (cell.classList.contains("game-table-cell")) {
-      cell.classList.toggle("cell-life");
-      const [i, j] = this.getCoordsById(cell.id);
-      if (cell.classList.contains("cell-life")) {
-        this.state[i][j] = true;
-      } else {
-        this.state[i][j] = false;
       }
     }
+    this.fieldRenderer.createField(rows, columns)
   }
-  Move(cell) {
-    if (cell.classList.contains("game-table-cell")) {
-      cell.classList.toggle("cell-life");
-      const [i, j] = this.getCoordsById(cell.id);
-      if (cell.classList.contains("cell-life")) {
-        this.state[i][j] = true;
-      } else {
-        this.state[i][j] = false;
-      }
-    }
-  }
+
   handleCreateTable(e) {
     let userRows = this.dom.widthInput.value;
     let userCols = this.dom.heightInput.value;
@@ -330,30 +405,17 @@ class Game {
       alert("введите данные");
       return;
     }
-    let isExistTable = this.field !== null;
-    if (isExistTable) {
-      let element = this.field;
-      element.parentNode.removeChild(element);
-    }
 
     this.createTable(userRows, userCols);
+
     this.dom.widthInput.value = "";
     this.dom.heightInput.value = "";
-    this.dom.text.textContent =
-      "Game created, your field size: " + userCols + "x" + userRows;
+    this.dom.text.textContent = "Game created, your field size: " + userCols + "x" + userRows;
   }
-  getCellIdByCoords(i, j) {
-    return "cell-" + i + "-" + j;
-  }
-  renderTable(fieldData) {
+  fillCells(fieldData) {
     for (let i = 0; i < fieldData.length; i++) {
       for (let j = 0; j < fieldData[i].length; j++) {
-        let cell = document.getElementById(this.getCellIdByCoords(i, j));
-        if (fieldData[i][j]) {
-          cell.classList.add("cell-life");
-        } else {
-          cell.classList.remove("cell-life");
-        }
+        this.fieldRenderer.fillCell(i,j,fieldData[i][j])
       }
     }
   }
