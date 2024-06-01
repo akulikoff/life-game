@@ -34,14 +34,13 @@ class CanvasRenderer {
     this.cellSize = this.calcCellSize(rows, columns, this.canvas.width, this.canvas.height)
 
     const ctx = this.canvas.getContext("2d"); //TODO: Можно ли ctx положить в свойство класса
-
-    const colors = ['red', 'white']
-    let cnt = 0
+debugger
+    const colors = ['red', 'black']
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < columns; j++) {
-        cnt++
-        const coords = this.getCellCoords(i, j, this.canvas.width, this.canvas.height)
-        ctx.fillStyle = colors[cnt%colors.length];
+        const coords = this.getCellCoords(i, j, this.cellSize, this.cellSize, this.canvas.width, this.canvas.height)
+
+        ctx.fillStyle = colors[(i+j)%colors.length];
         ctx.fillRect(coords.x, coords.y, this.cellSize, this.cellSize);
       }
     }
@@ -57,8 +56,13 @@ class CanvasRenderer {
   }
 
   // TODO: нужные тесты
-  getCellCoords(i, j, size, width, height){
-    return 0
+  getCellCoords(i, j, cellWidth, cellHeight, fieldWidth, fieldHeight){
+    const helper = function (pos, size, fullSize) {
+      return size * pos
+    }
+    let x = helper(i, cellWidth, fieldWidth)
+    let y = helper(j, cellHeight, fieldHeight)
+    return {x:x, y:y}
   }
 }
 
