@@ -46,24 +46,22 @@ class CanvasRenderer {
     this.ctx.lineWidth = 1;
     this.ctx.strokeRect(0, 0, this.field.width, this.field.height);
 
-  //   const colors = ['red', 'black']
-  //   for (let i = 0; i < rows; i++) {
-  //     for (let j = 0; j < columns; j++) {
-  //       const coords = this.getCellCoords(i, j, this.cellSize, this.cellSize)
-  //
-  //       this.ctx.fillStyle = colors[(i+j)%colors.length];
-  //       this.ctx.fillRect(coords.x, coords.y, this.cellSize, this.cellSize);
-  //     }
-  //   }
+    //TODO: addHandlers
   }
 
   fillCell(i,j,val) {
-
+    let color = 'white'
+    if (val) color = 'red'
+    const coords = this.getCellCoords(i, j, this.cellSize, this.cellSize)
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(coords.x, coords.y, this.cellSize, this.cellSize);
   }
+
   removeHandlers() {
 
   }
 
+  // Private
   // TODO: реализовать и написать тесты
   calcCellSize(rows, columns, width, height) {
     return 17
