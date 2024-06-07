@@ -80,10 +80,8 @@ class CanvasRenderer {
 
   fillCell(i, j, val) {
     let color = "white";
-    let state = false;
     if (val) {
       color = "red";
-      state = true;
     }
     const coords = this.getCellCoords(i, j, this.cellSize, this.cellSize);
     this.ctx.fillStyle = color;
@@ -92,10 +90,18 @@ class CanvasRenderer {
 
   startDrawing(event) {
     this.drawing = true;
-    this.ctx.lineWidth = this.cellSize;
-    this.ctx.lineCap = "round";
-    this.ctx.strokeStyle = "transparent";
-    this.ctx.beginPath();
+
+    this.cellVal = true;
+
+    var x = event.offsetX;
+    var y = event.offsetY;
+    var imageData = this.ctx.getImageData(x, y, 1, 1);
+    var data = imageData.data;
+    if (data[0] > 0) {
+      this.cellVal = false;
+    }
+    var rgb = "rgb(" + data[0] + ", " + data[1] + ", " + data[2] + ")";
+    console.log(rgb);
     this.draw(event); // Начинаем рисование
   }
 
@@ -104,25 +110,17 @@ class CanvasRenderer {
     const rect = this.canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-
     if (x < 0 || x > this.canvas.width || y < 0 || y > this.canvas.height) {
       return; // Предотвращение рисования за пределами canvas
     }
-
     const i = Math.floor(x / this.cellSize);
     const j = Math.floor(y / this.cellSize);
-
-    this.fillCell(i, j, true);
-    this.setCell(i, j, true);
-    this.ctx.lineTo(x, y);
-    this.ctx.stroke();
-    this.ctx.beginPath();
-    this.ctx.moveTo(x, y);
+    this.fillCell(i, j, this.cellVal);
+    this.setCell(i, j, this.cellVal);
   }
 
   stopDrawing() {
     this.drawing = false;
-    this.ctx.beginPath();
   }
 
   removeHandlers() {
