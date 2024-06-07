@@ -21,10 +21,6 @@
 class CanvasRenderer {
   canvas;
   ctx;
-  field = {
-    width: 0,
-    height: 0,
-  };
   references = {
     handleStartDrawingreference: null,
     handleDrawreference: null,
@@ -69,11 +65,8 @@ class CanvasRenderer {
       this.canvas.width,
       this.canvas.height
     );
-    this.field.width = columns * this.cellSize; // исправил строки на столбцы
-    this.field.height = rows * this.cellSize; // исправил столбцы на строки
-    this.canvas.width = this.field.width;
-    this.canvas.height = this.field.height;
-    console.log(this.field);
+    this.canvas.width = columns * this.cellSize; // исправил строки на столбцы
+    this.canvas.height = rows * this.cellSize; // исправил столбцы на строки
     this.ctx = this.canvas.getContext("2d");
 
     this.ctx.strokeStyle = "green";
@@ -82,7 +75,7 @@ class CanvasRenderer {
 
     // Clear the canvas and redraw the field
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.strokeRect(0, 0, this.field.width, this.field.height);
+    this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   fillCell(i, j, val) {
@@ -112,7 +105,7 @@ class CanvasRenderer {
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    if (x < 0 || x > this.field.width || y < 0 || y > this.field.height) {
+    if (x < 0 || x > this.canvas.width || y < 0 || y > this.canvas.height) {
       return; // Предотвращение рисования за пределами canvas
     }
 
