@@ -24,53 +24,107 @@ class CanvasRenderer {
   field = {
     width: 0,
     height: 0,
-  }
-  constructor(fieldId, setCell) {
-    this.setCell = setCell
-    this.canvas = document.getElementById(fieldId)
-    const val = Math.min(innerWidth - 2, innerHeight - 130)
-    this.canvas.width = val
-    this.canvas.height = val
-  }
-  init() {
+  };
+  drawing = false;
+  cellSize = 0;
 
+  constructor(fieldId, setCell) {
+    this.setCell = setCell;
+    this.canvas = document.getElementById(fieldId);
+    const val = Math.min(innerWidth - 2, innerHeight - 130);
+    this.canvas.width = val;
+    this.canvas.height = val;
+    this.init();
   }
+
+  init() {
+    this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
+    this.canvas.addEventListener("mousemove", this.draw.bind(this));
+    this.canvas.addEventListener("mouseup", this.stopDrawing.bind(this));
+    this.canvas.addEventListener("mouseout", this.stopDrawing.bind(this));
+  }
+
   createField(rows, columns) {
-    this.cellSize = this.calcCellSize(rows, columns, this.canvas.width, this.canvas.height)
-    this.field.width = rows * this.cellSize + 2
-    this.field.height = columns * this.cellSize + 2
+    this.cellSize = this.calcCellSize(
+      rows,
+      columns,
+      this.canvas.width,
+      this.canvas.height
+    );
+    this.field.width = columns * this.cellSize; // исправил строки на столбцы
+    this.field.height = rows * this.cellSize; // исправил столбцы на строки
 
     this.ctx = this.canvas.getContext("2d");
 
-    this.ctx.strokeStyle = 'blue';
+    this.ctx.strokeStyle = "green";
     this.ctx.lineWidth = 1;
-    this.ctx.strokeRect(0, 0, this.field.width, this.field.height);
+    // this.ctx.strokeRect(0, 0, this.field.width, this.field.height);
 
-    //TODO: addHandlers
+    // Clear the canvas and redraw the field
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.strokeRect(0, 0, this.field.width, this.field.height);
   }
 
-  fillCell(i,j,val) {
-    let color = 'white'
-    if (val) color = 'red'
-    const coords = this.getCellCoords(i, j, this.cellSize, this.cellSize)
+  fillCell(i, j, val) {
+    let color = "white";
+    if (val) color = "red";
+    const coords = this.getCellCoords(i, j, this.cellSize, this.cellSize);
     this.ctx.fillStyle = color;
     this.ctx.fillRect(coords.x, coords.y, this.cellSize, this.cellSize);
   }
 
+  startDrawing(event) {
+    this.drawing = true;
+    this.ctx.lineWidth = this.cellSize;
+    this.ctx.lineCap = "round";
+    this.ctx.strokeStyle = "transparent";
+    this.ctx.beginPath();
+    this.draw(event); // Начинаем рисование
+  }
+
+  draw(event) {
+    if (!this.drawing) return;
+    const rect = this.canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    if (x < 0 || x > this.field.width || y < 0 || y > this.field.height) {
+      return; // Предотвращение рисования за пределами canvas
+    }
+
+    const i = Math.floor(x / this.cellSize);
+    const j = Math.floor(y / this.cellSize);
+
+    this.fillCell(i, j, true);
+
+    this.ctx.lineTo(x, y);
+    this.ctx.stroke();
+    this.ctx.beginPath();
+    this.ctx.moveTo(x, y);
+  }
+
+  stopDrawing() {
+    this.drawing = false;
+    this.ctx.beginPath();
+  }
+
   removeHandlers() {
-
+    this.canvas.removeEventListener("mousedown", this.startDrawing.bind(this));
+    this.canvas.removeEventListener("mousemove", this.draw.bind(this));
+    this.canvas.removeEventListener("mouseup", this.stopDrawing.bind(this));
+    this.canvas.removeEventListener("mouseout", this.stopDrawing.bind(this));
   }
 
-  // Private
-  // TODO: реализовать и написать тесты
   calcCellSize(rows, columns, width, height) {
-    return 17
+    const cellWidth = Math.floor(width / columns);
+    const cellHeight = Math.floor(height / rows);
+    return Math.min(cellWidth, cellHeight);
   }
 
-  getCellCoords(i, j, cellWidth, cellHeight){
-    let x = i * cellWidth
-    let y = j * cellHeight
-    return {x:x+1, y:y+1}
+  getCellCoords(i, j, cellWidth, cellHeight) {
+    let x = i * cellWidth;
+    let y = j * cellHeight;
+    return { x: x, y: y };
   }
 }
 
@@ -83,45 +137,43 @@ class DOMRenderer {
     field: null,
   };
   callbacks = {
-    setCell: null
-  }
+    setCell: null,
+  };
 
   constructor(fieldId, setCell) {
-    this.callbacks.setCell = setCell
-    this.dom.field = document.getElementById(fieldId)
+    this.callbacks.setCell = setCell;
+    this.dom.field = document.getElementById(fieldId);
   }
 
-  init() {
-
-  }
+  init() {}
 
   bindEvent() {
     this.dom.field.addEventListener(
-        "click",
-        (this.references.handleClickLifereference =
-            this.handleClickCell.bind(this)),
-        true
+      "click",
+      (this.references.handleClickLifereference =
+        this.handleClickCell.bind(this)),
+      true
     );
     this.dom.field.addEventListener(
-        "mousemove",
-        (this.references.handleMoveLifereference = this.handleMove.bind(this)),
-        true
+      "mousemove",
+      (this.references.handleMoveLifereference = this.handleMove.bind(this)),
+      true
     );
   }
 
   handleClickCell(e) {
-    this.clickLife(e.target)
+    this.clickLife(e.target);
   }
 
   clickLife(cell) {
     if (cell.classList.contains("game-table-cell")) {
       cell.classList.toggle("cell-life");
       const [i, j] = this.getCoordsById(cell.id);
-      let state = false
+      let state = false;
       if (cell.classList.contains("cell-life")) {
         state = true;
       }
-      this.callbacks.setCell(i,j,state)
+      this.callbacks.setCell(i, j, state);
     }
   }
 
@@ -135,11 +187,11 @@ class DOMRenderer {
     if (cell.classList.contains("game-table-cell")) {
       cell.classList.toggle("cell-life");
       const [i, j] = this.getCoordsById(cell.id);
-      let state = false
+      let state = false;
       if (cell.classList.contains("cell-life")) {
         state = true;
       }
-      this.callbacks.setCell(i,j,state)
+      this.callbacks.setCell(i, j, state);
     }
   }
 
@@ -175,11 +227,10 @@ class DOMRenderer {
     }
     this.dom.field.appendChild(fragment);
 
-
-    this.bindEvent() // TODO: пока пусть тут
+    this.bindEvent(); // TODO: пока пусть тут
   }
 
-  fillCell(i,j,val) {
+  fillCell(i, j, val) {
     let cell = document.getElementById(this.getCellIdByCoords(i, j));
     if (val) {
       cell.classList.add("cell-life");
@@ -205,20 +256,20 @@ class DOMRenderer {
 
   removeHandlers() {
     this.dom.field.removeEventListener(
-        "click",
-        this.references.handleClickLifereference,
-        true
+      "click",
+      this.references.handleClickLifereference,
+      true
     );
     this.dom.field.removeEventListener(
-        "mousemove",
-        this.references.handleMoveLifereference,
-        true
+      "mousemove",
+      this.references.handleMoveLifereference,
+      true
     );
   }
 }
 
 class Game {
-  fieldRenderer;// = new CanvasRenderer(); // Use interface Renderer
+  fieldRenderer; // = new CanvasRenderer(); // Use interface Renderer
   intervalId;
   state = [];
   scoreCounter = 0;
@@ -263,10 +314,13 @@ class Game {
     this.dom.stopBtn = document.getElementById(stopBtnId);
     this.dom.text = document.getElementById(textId);
 
-    this.fieldRenderer = new CanvasRenderer("canv-field", this.setCell.bind(this));
+    this.fieldRenderer = new CanvasRenderer(
+      "canv-field",
+      this.setCell.bind(this)
+    );
   }
   setCell(i, j, val) {
-    this.state[i][j] = val
+    this.state[i][j] = val;
   }
 
   init() {
@@ -313,7 +367,7 @@ class Game {
     }
 
     this.intervalId = setInterval(this.run.bind(this), this.speed);
-    this.fieldRenderer.removeHandlers()
+    this.fieldRenderer.removeHandlers();
     // this.dom.field.style.cursor = "not-allowed"; // TODO унести в fieldRenderer
     this.dom.createBtn.removeEventListener(
       "click",
@@ -443,7 +497,7 @@ class Game {
         this.state[i][j] = false;
       }
     }
-    this.fieldRenderer.createField(rows, columns)
+    this.fieldRenderer.createField(rows, columns);
   }
 
   handleCreateTable(e) {
@@ -458,12 +512,13 @@ class Game {
 
     this.dom.widthInput.value = "";
     this.dom.heightInput.value = "";
-    this.dom.text.textContent = "Game created, your field size: " + userCols + "x" + userRows;
+    this.dom.text.textContent =
+      "Game created, your field size: " + userCols + "x" + userRows;
   }
   fillCells(fieldData) {
     for (let i = 0; i < fieldData.length; i++) {
       for (let j = 0; j < fieldData[i].length; j++) {
-        this.fieldRenderer.fillCell(i,j,fieldData[i][j])
+        this.fieldRenderer.fillCell(i, j, fieldData[i][j]);
       }
     }
   }
@@ -471,15 +526,15 @@ class Game {
 
 document.addEventListener("DOMContentLoaded", () => {
   let game = new Game(
-      50,
-      50,
-      100,
-      "score",
-      "create",
-      "generate",
-      "start",
-      "stop",
-      "text"
+    50,
+    50,
+    100,
+    "score",
+    "create",
+    "generate",
+    "start",
+    "stop",
+    "text"
   );
   game.init();
 });
