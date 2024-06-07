@@ -12,10 +12,10 @@
 +переписать на Class
 -добавить наследование
 -использовать canvas
-масштабировать поле 
++масштабировать поле 
     минимальные размеры клетки
     максимальные размеры контейнера поля
-
+-добавить возможность установки тлщины линии
 */
 
 class CanvasRenderer {
@@ -24,6 +24,11 @@ class CanvasRenderer {
   field = {
     width: 0,
     height: 0,
+  };
+  references = {
+    handleStartDrawingreference: null,
+    handleDrawreference: null,
+    handleStopDrawingreference: null,
   };
   drawing = false;
   cellSize = 0;
@@ -38,10 +43,23 @@ class CanvasRenderer {
   }
 
   init() {
-    this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
-    this.canvas.addEventListener("mousemove", this.draw.bind(this));
-    this.canvas.addEventListener("mouseup", this.stopDrawing.bind(this));
-    this.canvas.addEventListener("mouseout", this.stopDrawing.bind(this));
+    this.canvas.addEventListener(
+      "mousedown",
+      (this.references.handleStartDrawingreference =
+        this.startDrawing.bind(this))
+    );
+    this.canvas.addEventListener(
+      "mousemove",
+      (this.references.handleDrawreference = this.draw.bind(this))
+    );
+    this.canvas.addEventListener(
+      "mouseup",
+      (this.references.handleStopDrawingreference = this.stopDrawing.bind(this))
+    );
+    this.canvas.addEventListener(
+      "mouseout",
+      (this.references.handleStopDrawingreference = this.stopDrawing.bind(this))
+    );
   }
 
   createField(rows, columns) {
@@ -67,7 +85,11 @@ class CanvasRenderer {
 
   fillCell(i, j, val) {
     let color = "white";
-    if (val) color = "red";
+    let state = false;
+    if (val) {
+      color = "red";
+      state = true;
+    }
     const coords = this.getCellCoords(i, j, this.cellSize, this.cellSize);
     this.ctx.fillStyle = color;
     this.ctx.fillRect(coords.x, coords.y, this.cellSize, this.cellSize);
@@ -109,10 +131,23 @@ class CanvasRenderer {
   }
 
   removeHandlers() {
-    this.canvas.removeEventListener("mousedown", this.startDrawing.bind(this));
-    this.canvas.removeEventListener("mousemove", this.draw.bind(this));
-    this.canvas.removeEventListener("mouseup", this.stopDrawing.bind(this));
-    this.canvas.removeEventListener("mouseout", this.stopDrawing.bind(this));
+    console.log("remove handlers");
+    this.canvas.removeEventListener(
+      "mousedown",
+      this.references.handleStartDrawingreference
+    );
+    this.canvas.removeEventListener(
+      "mousemove",
+      this.references.handleDrawreference
+    );
+    this.canvas.removeEventListener(
+      "mouseup",
+      this.references.handleStopDrawingreference
+    );
+    this.canvas.removeEventListener(
+      "mouseout",
+      this.references.handleStopDrawingreference
+    );
   }
 
   calcCellSize(rows, columns, width, height) {
@@ -144,8 +179,6 @@ class DOMRenderer {
     this.callbacks.setCell = setCell;
     this.dom.field = document.getElementById(fieldId);
   }
-
-  init() {}
 
   bindEvent() {
     this.dom.field.addEventListener(
@@ -324,7 +357,7 @@ class Game {
   }
 
   init() {
-    this.fieldRenderer.init();
+    // this.fieldRenderer.init();
     this.createTable(this.width, this.height);
     this.bindEvents();
     this.dom.widthInput.value = this.width;
