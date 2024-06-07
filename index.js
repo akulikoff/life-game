@@ -118,7 +118,7 @@ class CanvasRenderer {
     const j = Math.floor(y / this.cellSize);
 
     this.fillCell(i, j, true);
-
+    this.setCell(i, j, true);
     this.ctx.lineTo(x, y);
     this.ctx.stroke();
     this.ctx.beginPath();
