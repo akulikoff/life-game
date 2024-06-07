@@ -10,8 +10,8 @@
 +добавить логику остановки игры
 
 +переписать на Class
--добавить наследование
--использовать canvas
++добавить наследование
++использовать canvas
 +масштабировать поле 
     минимальные размеры клетки
     максимальные размеры контейнера поля
@@ -71,7 +71,9 @@ class CanvasRenderer {
     );
     this.field.width = columns * this.cellSize; // исправил строки на столбцы
     this.field.height = rows * this.cellSize; // исправил столбцы на строки
-
+    this.canvas.width = this.field.width;
+    this.canvas.height = this.field.height;
+    console.log(this.field);
     this.ctx = this.canvas.getContext("2d");
 
     this.ctx.strokeStyle = "green";
@@ -151,6 +153,12 @@ class CanvasRenderer {
   }
 
   calcCellSize(rows, columns, width, height) {
+    if (rows > width) {
+      width = rows;
+    }
+    if (columns > height) {
+      height = columns;
+    }
     const cellWidth = Math.floor(width / columns);
     const cellHeight = Math.floor(height / rows);
     return Math.min(cellWidth, cellHeight);
