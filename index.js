@@ -16,6 +16,7 @@
     минимальные размеры клетки
     максимальные размеры контейнера поля
 -добавить возможность установки тлщины линии
+- добавить radio button для выбора вырианта
 */
 
 class CanvasRenderer {
@@ -65,13 +66,12 @@ class CanvasRenderer {
       this.canvas.width,
       this.canvas.height
     );
-    this.canvas.width = columns * this.cellSize; // исправил строки на столбцы
-    this.canvas.height = rows * this.cellSize; // исправил столбцы на строки
+    this.canvas.width = columns * this.cellSize;
+    this.canvas.height = rows * this.cellSize;
     this.ctx = this.canvas.getContext("2d");
 
     this.ctx.strokeStyle = "green";
     this.ctx.lineWidth = 1;
-    // this.ctx.strokeRect(0, 0, this.field.width, this.field.height);
 
     // Clear the canvas and redraw the field
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -570,3 +570,26 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   game.init();
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const buttons = document.querySelectorAll("input[type='radio']");
+
+  buttons.forEach((button) => {
+    button.addEventListener("change", (event) => {
+      if (event.target.checked) {
+        console.log(`${event.target.id} is selected`);
+        // Perform any additional actions you want here
+        handleButtonSelection(event.target.id);
+      }
+    });
+  });
+});
+
+function handleButtonSelection(selectedButtonId) {
+  if (selectedButtonId === "table-btn") {
+    console.log("Button 1 was clicked!");
+    // Add your logic for Button 1 here
+  } else if (selectedButtonId === "canvas-btn") {
+    console.log("Button 2 was clicked!");
+    // Add your logic for Button 2 here
+  }
+}
