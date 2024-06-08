@@ -33,6 +33,7 @@ class CanvasRenderer {
   constructor(fieldId, setCell) {
     this.setCell = setCell;
     this.canvas = document.getElementById(fieldId);
+    this.canvas.style.display = "block";
     const val = Math.min(innerWidth - 2, innerHeight - 130);
     this.canvas.width = val;
     this.canvas.height = val;
@@ -116,7 +117,7 @@ class CanvasRenderer {
     const i = Math.floor(x / this.cellSize);
     const j = Math.floor(y / this.cellSize);
     this.fillCell(i, j, this.cellVal);
-    this.setCell(i, j, this.cellVal);
+    setCell(i, j, this.cellVal);
   }
 
   stopDrawing() {
@@ -159,6 +160,11 @@ class CanvasRenderer {
     let x = i * cellWidth;
     let y = j * cellHeight;
     return { x: x, y: y };
+  }
+  destroy() {
+    this.canvas.style.display = "none";
+    this.removeHandlers();
+    console.log("CanvasRenderer instance destroyed");
   }
 }
 
@@ -297,6 +303,10 @@ class DOMRenderer {
       this.references.handleMoveLifereference,
       true
     );
+  }
+  destroy() {
+    this.removeHandlers();
+    this.dom.field.parentNode.removeChild(this.dom.field);
   }
 }
 
@@ -553,20 +563,6 @@ class Game {
   }
 }
 
-// document.addEventListener("DOMContentLoaded", () => {
-//   let game = new Game(
-//     50,
-//     50,
-//     100,
-//     "score",
-//     "create",
-//     "generate",
-//     "start",
-//     "stop",
-//     "text"
-//   );
-//   game.init();
-// });
 document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll("input[type='radio']");
 
@@ -574,26 +570,29 @@ document.addEventListener("DOMContentLoaded", () => {
     button.addEventListener("change", (event) => {
       if (event.target.checked) {
         console.log(`${event.target.id} is selected`);
-        // Perform any additional actions you want here
         handleButtonSelection(event.target.id);
       }
     });
   });
 });
-
+// function setCell(i, j, val) {
+//   this.state[i][j] = val;
+// }
+let currentInstance = null;
 function handleButtonSelection(selectedButtonId) {
-  let instance;
+  if (currentInstance) {
+    currentInstance.destroy();
+    currentInstance = null;
+  }
   if (selectedButtonId === "table-btn") {
     console.log("Button 1 was clicked!");
-    instance = new DOMRenderer("field", this.setCell);
-    // Add your logic for Button 1 here
+    currentInstance = new DOMRenderer("field", this.setCell);
   } else if (selectedButtonId === "canvas-btn") {
     console.log("Button 2 was clicked!");
-    instance = new CanvasRenderer("canv-field", this.setCell);
-    // Add your logic for Button 2 here
+    currentInstance = new CanvasRenderer("canv-field", this.setCell);
   }
   let game = new Game(
-    instance,
+    currentInstance,
     50,
     50,
     100,
