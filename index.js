@@ -117,7 +117,7 @@ class CanvasRenderer {
     const i = Math.floor(x / this.cellSize);
     const j = Math.floor(y / this.cellSize);
     this.fillCell(i, j, this.cellVal);
-    setCell(i, j, this.cellVal);
+    this.setCell(i, j, this.cellVal);
   }
 
   stopDrawing() {
@@ -335,7 +335,6 @@ class Game {
     generateBtn: document.getElementById("generate"),
   };
   constructor(
-    instance,
     width,
     height,
     speed,
@@ -346,7 +345,6 @@ class Game {
     stopBtnId,
     textId
   ) {
-    this.fieldRenderer = instance;
     this.width = width;
     this.height = height;
     this.speed = speed;
@@ -362,8 +360,8 @@ class Game {
     this.state[i][j] = val;
   }
 
-  init() {
-    // this.fieldRenderer.init();
+  init(rendererInstance) {
+    this.fieldRenderer = rendererInstance;
     this.createTable(this.width, this.height);
     this.bindEvents();
     this.dom.widthInput.value = this.width;
@@ -575,24 +573,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
-// function setCell(i, j, val) {
-//   this.state[i][j] = val;
-// }
-let currentInstance = null;
+
+let rendererInstance = null;
 function handleButtonSelection(selectedButtonId) {
-  if (currentInstance) {
-    currentInstance.destroy();
-    currentInstance = null;
-  }
-  if (selectedButtonId === "table-btn") {
-    console.log("Button 1 was clicked!");
-    currentInstance = new DOMRenderer("field", this.setCell);
-  } else if (selectedButtonId === "canvas-btn") {
-    console.log("Button 2 was clicked!");
-    currentInstance = new CanvasRenderer("canv-field", this.setCell);
+  if (rendererInstance) {
+    rendererInstance.destroy();
+    rendererInstance = null;
   }
   let game = new Game(
-    currentInstance,
     50,
     50,
     100,
@@ -603,5 +591,16 @@ function handleButtonSelection(selectedButtonId) {
     "stop",
     "text"
   );
-  game.init();
+  if (selectedButtonId === "table-btn") {
+    console.log("Button 1 was clicked!");
+    rendererInstance = new DOMRenderer("field", game.setCell.bind(game));
+  } else if (selectedButtonId === "canvas-btn") {
+    console.log("Button 2 was clicked!");
+    rendererInstance = new CanvasRenderer(
+      "canv-field",
+      game.setCell.bind(game)
+    );
+  }
+
+  game.init(rendererInstance);
 }
