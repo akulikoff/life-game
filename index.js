@@ -168,7 +168,7 @@ class CanvasRenderer {
   }
 }
 
-class DOMRenderer {
+class TableRenderer {
   references = {
     handleClickLifereference: null,
     handleMoveLifereference: null,
@@ -311,7 +311,7 @@ class DOMRenderer {
 }
 
 class Game {
-  fieldRenderer; // = new CanvasRenderer(); // Use interface Renderer
+  renderer; // = new CanvasRenderer(); // Use interface Renderer
   intervalId;
   state = [];
   scoreCounter = 0;
@@ -324,6 +324,8 @@ class Game {
   };
   dom = {
     // instance,
+    tableBtn: document.getElementById("table-btn"),
+    canvasBtn: document.getElementById("canvas-btn"),
     createBtn: document.getElementById("create"),
     widthInput: document.getElementById("width"),
     heightInput: document.getElementById("height"),
@@ -362,8 +364,8 @@ class Game {
 
   init(rendererInstance) {
     this.fieldRenderer = rendererInstance;
-    this.createTable(this.width, this.height);
     this.bindEvents();
+    // this.createTable(this.width, this.height);
     this.dom.widthInput.value = this.width;
     this.dom.heightInput.value = this.height;
     this.dom.speedInput.value = this.speed;
@@ -388,8 +390,35 @@ class Game {
       "click",
       (this.references.handleStopReference = this.stopGame.bind(this))
     );
+
+    this.dom.tableBtn.addEventListener("change", (event) => {
+      if (event.target.checked) {
+        this.handleButtonSelection(event.target.id);
+      }
+    });
+    this.dom.canvasBtn.addEventListener("change", (event) => {
+      if (event.target.checked) {
+        this.handleButtonSelection(event.target.id);
+      }
+    });
   }
 
+  handleButtonSelection(selectedButtonId) {
+    if (this.renderer) {
+      this.renderer.destroy();
+    }
+
+    if (selectedButtonId === "table-btn") {
+      console.log("Button 1 was clicked!");
+      this.renderer = new TableRenderer("field", this.setCell.bind(this));
+    } else if (selectedButtonId === "canvas-btn") {
+      console.log("Button 2 was clicked!");
+      this.renderer = new CanvasRenderer("canv-field", this.setCell.bind(this));
+    }
+
+    this.init(this.renderer);
+    this.createTable(this.width, this.height);
+  }
   // запуск игры
   handlePlayGame(e) {
     console.log("start");
@@ -404,7 +433,7 @@ class Game {
     }
 
     this.intervalId = setInterval(this.run.bind(this), this.speed);
-    this.fieldRenderer.removeHandlers();
+    this.renderer.removeHandlers();
     // this.dom.field.style.cursor = "not-allowed"; // TODO унести в fieldRenderer
     this.dom.createBtn.removeEventListener(
       "click",
@@ -534,7 +563,7 @@ class Game {
         this.state[i][j] = false;
       }
     }
-    this.fieldRenderer.createField(rows, columns);
+    this.renderer.createField(rows, columns);
   }
 
   handleCreateTable(e) {
@@ -555,31 +584,13 @@ class Game {
   fillCells(fieldData) {
     for (let i = 0; i < fieldData.length; i++) {
       for (let j = 0; j < fieldData[i].length; j++) {
-        this.fieldRenderer.fillCell(i, j, fieldData[i][j]);
+        this.renderer.fillCell(i, j, fieldData[i][j]);
       }
     }
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const buttons = document.querySelectorAll("input[type='radio']");
-
-  buttons.forEach((button) => {
-    button.addEventListener("change", (event) => {
-      if (event.target.checked) {
-        console.log(`${event.target.id} is selected`);
-        handleButtonSelection(event.target.id);
-      }
-    });
-  });
-});
-
-let rendererInstance = null;
-function handleButtonSelection(selectedButtonId) {
-  if (rendererInstance) {
-    rendererInstance.destroy();
-    rendererInstance = null;
-  }
   let game = new Game(
     50,
     50,
@@ -591,16 +602,5 @@ function handleButtonSelection(selectedButtonId) {
     "stop",
     "text"
   );
-  if (selectedButtonId === "table-btn") {
-    console.log("Button 1 was clicked!");
-    rendererInstance = new DOMRenderer("field", game.setCell.bind(game));
-  } else if (selectedButtonId === "canvas-btn") {
-    console.log("Button 2 was clicked!");
-    rendererInstance = new CanvasRenderer(
-      "canv-field",
-      game.setCell.bind(game)
-    );
-  }
-
-  game.init(rendererInstance);
-}
+  game.init(null);
+});
