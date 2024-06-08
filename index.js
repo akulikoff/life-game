@@ -325,6 +325,7 @@ class Game {
     generateBtn: document.getElementById("generate"),
   };
   constructor(
+    instance,
     width,
     height,
     speed,
@@ -335,6 +336,7 @@ class Game {
     stopBtnId,
     textId
   ) {
+    this.fieldRenderer = instance;
     this.width = width;
     this.height = height;
     this.speed = speed;
@@ -345,11 +347,6 @@ class Game {
     this.dom.startBtn = document.getElementById(startBtnId);
     this.dom.stopBtn = document.getElementById(stopBtnId);
     this.dom.text = document.getElementById(textId);
-
-    this.fieldRenderer = new CanvasRenderer(
-      "canv-field",
-      this.setCell.bind(this)
-    );
   }
   setCell(i, j, val) {
     this.state[i][j] = val;
@@ -556,20 +553,20 @@ class Game {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  let game = new Game(
-    50,
-    50,
-    100,
-    "score",
-    "create",
-    "generate",
-    "start",
-    "stop",
-    "text"
-  );
-  game.init();
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//   let game = new Game(
+//     50,
+//     50,
+//     100,
+//     "score",
+//     "create",
+//     "generate",
+//     "start",
+//     "stop",
+//     "text"
+//   );
+//   game.init();
+// });
 document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll("input[type='radio']");
 
@@ -585,11 +582,27 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function handleButtonSelection(selectedButtonId) {
+  let instance;
   if (selectedButtonId === "table-btn") {
     console.log("Button 1 was clicked!");
+    instance = new DOMRenderer("field", this.setCell);
     // Add your logic for Button 1 here
   } else if (selectedButtonId === "canvas-btn") {
     console.log("Button 2 was clicked!");
+    instance = new CanvasRenderer("canv-field", this.setCell);
     // Add your logic for Button 2 here
   }
+  let game = new Game(
+    instance,
+    50,
+    50,
+    100,
+    "score",
+    "create",
+    "generate",
+    "start",
+    "stop",
+    "text"
+  );
+  game.init();
 }
