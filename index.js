@@ -310,6 +310,13 @@ class Game {
   renderer;
   intervalId;
   state = [];
+  behavior = {
+    allowRadio: true,
+    allowCreate: false,
+    allowGenerate: false,
+    allowStart: false,
+    allowStop: false,
+  };
   scoreCounter = 0;
   prevResultArr = [];
   references = {
@@ -357,8 +364,8 @@ class Game {
     this.state[i][j] = val;
   }
 
-  init(rendererInstance) {
-    this.fieldRenderer = rendererInstance;
+  init() {
+    // this.fieldRenderer = rendererInstance;
     this.bindGameConf();
     this.dom.widthInput.value = this.width;
     this.dom.heightInput.value = this.height;
@@ -400,6 +407,10 @@ class Game {
   }
 
   handleButtonSelection(selectedButtonId) {
+    if (!this.behavior.allowRadio) {
+      console.log("radio not allowed");
+      return;
+    }
     if (this.renderer) {
       this.renderer.destroy();
     }
@@ -410,12 +421,19 @@ class Game {
       console.log("Button 2 was clicked!");
       this.renderer = new CanvasRenderer("canv-field", this.setCell.bind(this));
     }
-    this.init(this.renderer);
+    this.behavior.allowCreate = true;
+    this.behavior.allowGenerate = true;
+    this.behavior.allowStart = true;
+    this.init();
     this.bindControls();
     this.createTable(this.width, this.height);
   }
   // запуск игры
   handlePlayGame(e) {
+    if (!this.behavior.allowStart) {
+      console.log("start not allowed");
+      return;
+    }
     console.log("start");
     if (+this.dom.speedInput.value > 0) {
       this.speed = +this.dom.speedInput.value;
@@ -434,6 +452,11 @@ class Game {
     if (table) {
       table.style.cursor = "not-allowed";
     }
+    this.behavior.allowStop = true;
+    this.behavior.allowRadio = false;
+    this.behavior.allowStart = false;
+    this.behavior.allowGenerate = false;
+    this.behavior.allowCreate = false;
     this.intervalId = setInterval(this.run.bind(this), this.speed);
     this.renderer.removeHandlers();
     this.dom.createBtn.removeEventListener(
@@ -450,6 +473,16 @@ class Game {
     );
   }
   stopGame() {
+    if (!this.behavior.allowStop) {
+      console.log("stop not allowed");
+      return;
+    }
+    this.behavior.allowRadio = true;
+    this.behavior.allowStart = true;
+    this.behavior.allowGenerate = true;
+    this.behavior.allowCreate = true;
+    this.behavior.allowStop = false;
+    this.dom.stopBtn.style.display = "none";
     clearInterval(this.intervalId);
     this.dom.createBtn.addEventListener(
       "click",
@@ -552,6 +585,10 @@ class Game {
     return result;
   }
   handleRandomGenerate(e) {
+    if (!this.behavior.allowGenerate) {
+      console.log("random not allowed");
+      return;
+    }
     this.state = this.genRandom(this.state);
     this.fillCells(this.state);
   }
@@ -568,6 +605,10 @@ class Game {
   }
 
   handleCreateTable(e) {
+    if (!this.behavior.allowCreate) {
+      console.log("create not allowed");
+      return;
+    }
     let userRows = +this.dom.widthInput.value;
     let userCols = +this.dom.heightInput.value;
     console.log(userRows, userCols, typeof userRows, typeof userCols);
