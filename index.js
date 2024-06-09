@@ -1,23 +1,4 @@
-/* TODO
-+реализовать логику подсчёта соседей и переключения класса
-+генерацию случайной расстановки живых
-+проверить работу выбора скорости
-
-
-+проверить создание таблицы (слушатель)
-+удалять слушатели событий после старта
-+добавить счётчик очков
-+добавить логику остановки игры
-
-+переписать на Class
-+добавить наследование
-+использовать canvas
-+масштабировать поле 
-    минимальные размеры клетки
-    максимальные размеры контейнера поля
--добавить возможность установки тлщины линии
-- добавить radio button для выбора вырианта
-
+/* 
 rows - height
 columns - width
 */
@@ -337,6 +318,7 @@ class Game {
     text: document.getElementById("text"),
     score: document.getElementById("score"),
     generateBtn: document.getElementById("generate"),
+    game: document.getElementById("game"),
   };
   constructor(
     width,
@@ -347,7 +329,8 @@ class Game {
     generateBtnId,
     startBtnId,
     stopBtnId,
-    textId
+    textId,
+    gameId
   ) {
     this.width = width;
     this.height = height;
@@ -372,6 +355,7 @@ class Game {
     this.dom.heightInput.value = this.height;
     this.dom.speedInput.value = this.speed;
     this.dom.stopBtn.style.display = "none";
+    this.dom.game.style.display = "none";
   }
   bindControls() {
     this.dom.startBtn.addEventListener("click", this.handlePlayGame.bind(this));
@@ -402,6 +386,7 @@ class Game {
   }
 
   handleButtonSelection(selectedButtonId) {
+    this.dom.game.style.display = "flex";
     if (!this.behavior.allowRadio) {
       console.log("radio not allowed");
       return;
@@ -604,7 +589,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "generate",
     "start",
     "stop",
-    "text"
+    "text",
+    "game"
   );
   game.init();
 });
