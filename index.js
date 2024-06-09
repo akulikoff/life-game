@@ -319,12 +319,7 @@ class Game {
   };
   scoreCounter = 0;
   prevResultArr = [];
-  references = {
-    handleCreateReference: null,
-    handleRandomGenerateReference: null,
-    handleStartReference: null,
-    handleStopReference: null,
-  };
+
   dom = {
     tableBtn: document.getElementById("table-btn"),
     canvasBtn: document.getElementById("canvas-btn"),
@@ -366,6 +361,7 @@ class Game {
 
   init() {
     // this.fieldRenderer = rendererInstance;
+    this.bindControls();
     this.bindGameConf();
     this.dom.widthInput.value = this.width;
     this.dom.heightInput.value = this.height;
@@ -373,25 +369,19 @@ class Game {
     this.dom.stopBtn.style.display = "none";
   }
   bindControls() {
-    this.dom.startBtn.addEventListener(
-      "click",
-      (this.references.handleStartReference = this.handlePlayGame.bind(this))
-    );
+    this.dom.startBtn.addEventListener("click", this.handlePlayGame.bind(this));
 
     this.dom.createBtn.addEventListener(
       "click",
-      (this.references.handleCreateReference =
-        this.handleCreateTable.bind(this))
+
+      this.handleCreateTable.bind(this)
     );
     this.dom.generateBtn.addEventListener(
       "click",
-      (this.references.handleRandomGenerateReference =
-        this.handleRandomGenerate.bind(this))
+
+      this.handleRandomGenerate.bind(this)
     );
-    this.dom.stopBtn.addEventListener(
-      "click",
-      (this.references.handleStopReference = this.stopGame.bind(this))
-    );
+    this.dom.stopBtn.addEventListener("click", this.stopGame.bind(this));
   }
   bindGameConf() {
     this.dom.tableBtn.addEventListener("change", (event) => {
@@ -424,8 +414,6 @@ class Game {
     this.behavior.allowCreate = true;
     this.behavior.allowGenerate = true;
     this.behavior.allowStart = true;
-    this.init();
-    this.bindControls();
     this.createTable(this.width, this.height);
   }
   // запуск игры
@@ -459,18 +447,6 @@ class Game {
     this.behavior.allowCreate = false;
     this.intervalId = setInterval(this.run.bind(this), this.speed);
     this.renderer.removeHandlers();
-    this.dom.createBtn.removeEventListener(
-      "click",
-      this.references.handleCreateReference
-    );
-    this.dom.generateBtn.removeEventListener(
-      "click",
-      this.references.handleRandomGenerateReference
-    );
-    this.dom.startBtn.removeEventListener(
-      "click",
-      this.references.handleStartReference
-    );
   }
   stopGame() {
     if (!this.behavior.allowStop) {
@@ -484,20 +460,6 @@ class Game {
     this.behavior.allowStop = false;
     this.dom.stopBtn.style.display = "none";
     clearInterval(this.intervalId);
-    this.dom.createBtn.addEventListener(
-      "click",
-      (this.references.handleCreateReference =
-        this.handleCreateTable.bind(this))
-    );
-    this.dom.generateBtn.addEventListener(
-      "click",
-      (this.references.handleRandomGenerateReference =
-        this.handleRandomGenerate.bind(this))
-    );
-    this.dom.startBtn.addEventListener(
-      "click",
-      (this.references.handleStartReference = this.handlePlayGame.bind(this))
-    );
   }
 
   generateNextGeneration(field) {
@@ -645,5 +607,5 @@ document.addEventListener("DOMContentLoaded", () => {
     "stop",
     "text"
   );
-  game.init(null);
+  game.init();
 });
