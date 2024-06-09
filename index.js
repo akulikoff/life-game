@@ -348,7 +348,6 @@ class Game {
   }
 
   init() {
-    // this.fieldRenderer = rendererInstance;
     this.bindControls();
     this.bindGameConf();
     this.dom.widthInput.value = this.width;
