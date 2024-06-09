@@ -34,9 +34,9 @@ class CanvasRenderer {
     this.setCell = setCell;
     this.canvas = document.getElementById(fieldId);
     this.canvas.style.display = "block";
-    const val = Math.min(innerWidth - 2, innerHeight - 130);
-    this.canvas.width = val;
-    this.canvas.height = val;
+    // const val = Math.min(innerWidth - 2, innerHeight - 130);
+    // this.canvas.width = val;
+    // this.canvas.height = val;
     this.init();
   }
 
@@ -71,7 +71,7 @@ class CanvasRenderer {
     this.canvas.height = rows * this.cellSize;
     this.ctx = this.canvas.getContext("2d");
 
-    this.ctx.strokeStyle = "green";
+    this.ctx.strokeStyle = "blue";
     this.ctx.lineWidth = 1;
 
     // Clear the canvas and redraw the field
@@ -91,18 +91,14 @@ class CanvasRenderer {
 
   startDrawing(event) {
     this.drawing = true;
-
     this.cellVal = true;
-
-    var x = event.offsetX;
-    var y = event.offsetY;
-    var imageData = this.ctx.getImageData(x, y, 1, 1);
-    var data = imageData.data;
+    let x = event.offsetX;
+    let y = event.offsetY;
+    let imageData = this.ctx.getImageData(x, y, 1, 1);
+    let data = imageData.data;
     if (data[0] > 0) {
       this.cellVal = false;
     }
-    var rgb = "rgb(" + data[0] + ", " + data[1] + ", " + data[2] + ")";
-    console.log(rgb);
     this.draw(event); // Начинаем рисование
   }
 
@@ -217,11 +213,11 @@ class TableRenderer {
 
   handleMove(e) {
     if (e.buttons === 1) {
-      this.Move(e.target);
+      this.moveLife(e.target);
     }
   }
 
-  Move(cell) {
+  moveLife(cell) {
     if (cell.classList.contains("game-table-cell")) {
       cell.classList.toggle("cell-life");
       const [i, j] = this.getCoordsById(cell.id);
@@ -311,7 +307,7 @@ class TableRenderer {
 }
 
 class Game {
-  renderer; // = new CanvasRenderer(); // Use interface Renderer
+  renderer;
   intervalId;
   state = [];
   scoreCounter = 0;
@@ -323,7 +319,6 @@ class Game {
     handleStopReference: null,
   };
   dom = {
-    // instance,
     tableBtn: document.getElementById("table-btn"),
     canvasBtn: document.getElementById("canvas-btn"),
     createBtn: document.getElementById("create"),
@@ -365,7 +360,6 @@ class Game {
   init(rendererInstance) {
     this.fieldRenderer = rendererInstance;
     this.bindEvents();
-    // this.createTable(this.width, this.height);
     this.dom.widthInput.value = this.width;
     this.dom.heightInput.value = this.height;
     this.dom.speedInput.value = this.speed;
@@ -407,7 +401,6 @@ class Game {
     if (this.renderer) {
       this.renderer.destroy();
     }
-
     if (selectedButtonId === "table-btn") {
       console.log("Button 1 was clicked!");
       this.renderer = new TableRenderer("field", this.setCell.bind(this));
@@ -415,7 +408,6 @@ class Game {
       console.log("Button 2 was clicked!");
       this.renderer = new CanvasRenderer("canv-field", this.setCell.bind(this));
     }
-
     this.init(this.renderer);
     this.createTable(this.width, this.height);
   }
