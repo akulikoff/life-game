@@ -363,6 +363,7 @@ class Game {
     this.dom.widthInput.value = this.width;
     this.dom.heightInput.value = this.height;
     this.dom.speedInput.value = this.speed;
+    this.dom.stopBtn.style.display = "none";
   }
   bindEvents() {
     this.dom.startBtn.addEventListener(
@@ -423,10 +424,16 @@ class Game {
     if (!this.speed) {
       this.speed = 50;
     }
-
+    const canvas = document.getElementsByTagName("canvas")[0];
+    if (canvas) {
+      canvas.style.cursor = "not-allowed";
+    }
+    const table = document.getElementsByTagName("table")[0];
+    if (table) {
+      table.style.cursor = "not-allowed";
+    }
     this.intervalId = setInterval(this.run.bind(this), this.speed);
     this.renderer.removeHandlers();
-    // this.dom.field.style.cursor = "not-allowed"; // TODO унести в fieldRenderer
     this.dom.createBtn.removeEventListener(
       "click",
       this.references.handleCreateReference
@@ -559,8 +566,8 @@ class Game {
   }
 
   handleCreateTable(e) {
-    let userRows = parseInt(this.dom.widthInput.value);
-    let userCols = parseInt(this.dom.heightInput.value);
+    let userRows = +this.dom.widthInput.value;
+    let userCols = +this.dom.heightInput.value;
     console.log(userRows, userCols, typeof userRows, typeof userCols);
     if (!userRows || !userCols) {
       alert("введите данные");
