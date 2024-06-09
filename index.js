@@ -559,17 +559,18 @@ class Game {
   }
 
   handleCreateTable(e) {
-    let userRows = this.dom.widthInput.value;
-    let userCols = this.dom.heightInput.value;
+    let userRows = parseInt(this.dom.widthInput.value);
+    let userCols = parseInt(this.dom.heightInput.value);
+    console.log(userRows, userCols, typeof userRows, typeof userCols);
     if (!userRows || !userCols) {
       alert("введите данные");
       return;
     }
-
     this.createTable(userRows, userCols);
-
-    this.dom.widthInput.value = "";
-    this.dom.heightInput.value = "";
+    setTimeout(() => {
+      this.dom.widthInput.value = "";
+      this.dom.heightInput.value = "";
+    }, 0);
     this.dom.text.textContent =
       "Game created, your field size: " + userCols + "x" + userRows;
   }
