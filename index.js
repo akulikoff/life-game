@@ -17,6 +17,9 @@
     максимальные размеры контейнера поля
 -добавить возможность установки тлщины линии
 - добавить radio button для выбора вырианта
+
+rows - height
+columns - width
 */
 
 class CanvasRenderer {
@@ -570,19 +573,15 @@ class Game {
       console.log("create not allowed");
       return;
     }
-    let userRows = +this.dom.widthInput.value;
-    let userCols = +this.dom.heightInput.value;
+    let userCols = +this.dom.widthInput.value;
+    let userRows = +this.dom.heightInput.value;
     if (!userRows || !userCols) {
       alert("введите данные");
       return;
     }
     this.createTable(userRows, userCols);
-    setTimeout(() => {
-      this.dom.widthInput.value = "";
-      this.dom.heightInput.value = "";
-    }, 0);
     this.dom.text.textContent =
-      "Game created, your field size: " + userRows + "x" + userCols;
+      "Game created, your field size: " + userCols + "x" + userRows;
   }
   fillCells(fieldData) {
     for (let i = 0; i < fieldData.length; i++) {
