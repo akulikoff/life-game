@@ -30,6 +30,10 @@ class CanvasRenderer {
     handleDrawreference: null,
     handleStopDrawingreference: null,
   };
+  outer = {
+    width: innerWidth - 2,
+    height: innerHeight - 130,
+  };
   drawing = false;
   cellSize = 0;
 
@@ -67,8 +71,8 @@ class CanvasRenderer {
     this.cellSize = this.calcCellSize(
       rows,
       columns,
-      this.canvas.width,
-      this.canvas.height
+      this.outer.width,
+      this.outer.height
     );
     this.canvas.width = columns * this.cellSize;
     this.canvas.height = rows * this.cellSize;
@@ -144,15 +148,13 @@ class CanvasRenderer {
   }
 
   calcCellSize(rows, columns, width, height) {
-    if (rows > width) {
-      width = rows;
+    const cellWidth = Math.floor(width / rows);
+    const cellHeight = Math.floor(height / columns);
+    const res = Math.min(cellWidth, cellHeight);
+    if (res < 2) {
+      return 2;
     }
-    if (columns > height) {
-      height = columns;
-    }
-    const cellWidth = Math.floor(width / columns);
-    const cellHeight = Math.floor(height / rows);
-    return Math.min(cellWidth, cellHeight);
+    return res;
   }
 
   getCellCoords(i, j, cellWidth, cellHeight) {
