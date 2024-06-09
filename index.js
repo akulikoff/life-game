@@ -110,8 +110,8 @@ class CanvasRenderer {
     if (x < 0 || x > this.canvas.width || y < 0 || y > this.canvas.height) {
       return; // Предотвращение рисования за пределами canvas
     }
-    const i = Math.floor(x / this.cellSize);
-    const j = Math.floor(y / this.cellSize);
+    const i = Math.floor(y / this.cellSize);
+    const j = Math.floor(x / this.cellSize);
     this.fillCell(i, j, this.cellVal);
     this.setCell(i, j, this.cellVal);
   }
@@ -153,8 +153,8 @@ class CanvasRenderer {
   }
 
   getCellCoords(i, j, cellWidth, cellHeight) {
-    let x = i * cellWidth;
-    let y = j * cellHeight;
+    let y = i * cellWidth;
+    let x = j * cellHeight;
     return { x: x, y: y };
   }
   destroy() {
@@ -414,7 +414,14 @@ class Game {
     this.behavior.allowCreate = true;
     this.behavior.allowGenerate = true;
     this.behavior.allowStart = true;
-    this.createTable(this.width, this.height);
+    this.createTable(this.height, this.width);
+  }
+  printState() {
+    this.state.forEach((row) => {
+      let arr = [];
+      row.forEach((val) => arr.push(val ? 1 : 0));
+      console.log(arr.join(" "));
+    });
   }
   // запуск игры
   handlePlayGame(e) {
@@ -565,7 +572,6 @@ class Game {
     }
     let userRows = +this.dom.widthInput.value;
     let userCols = +this.dom.heightInput.value;
-    console.log(userRows, userCols, typeof userRows, typeof userCols);
     if (!userRows || !userCols) {
       alert("введите данные");
       return;
@@ -576,7 +582,7 @@ class Game {
       this.dom.heightInput.value = "";
     }, 0);
     this.dom.text.textContent =
-      "Game created, your field size: " + userCols + "x" + userRows;
+      "Game created, your field size: " + userRows + "x" + userCols;
   }
   fillCells(fieldData) {
     for (let i = 0; i < fieldData.length; i++) {
@@ -590,8 +596,8 @@ class Game {
 document.addEventListener("DOMContentLoaded", () => {
   let game = new Game(
     50,
-    50,
     100,
+    30,
     "score",
     "create",
     "generate",
