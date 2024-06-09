@@ -432,14 +432,6 @@ class Game {
     if (!this.speed) {
       this.speed = 50;
     }
-    const canvas = document.getElementsByTagName("canvas")[0];
-    if (canvas) {
-      canvas.style.cursor = "not-allowed";
-    }
-    const table = document.getElementsByTagName("table")[0];
-    if (table) {
-      table.style.cursor = "not-allowed";
-    }
     this.behavior.allowStop = true;
     this.behavior.allowRadio = false;
     this.behavior.allowStart = false;
