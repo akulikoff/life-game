@@ -359,13 +359,13 @@ class Game {
 
   init(rendererInstance) {
     this.fieldRenderer = rendererInstance;
-    this.bindEvents();
+    this.bindGameConf();
     this.dom.widthInput.value = this.width;
     this.dom.heightInput.value = this.height;
     this.dom.speedInput.value = this.speed;
     this.dom.stopBtn.style.display = "none";
   }
-  bindEvents() {
+  bindControls() {
     this.dom.startBtn.addEventListener(
       "click",
       (this.references.handleStartReference = this.handlePlayGame.bind(this))
@@ -385,7 +385,8 @@ class Game {
       "click",
       (this.references.handleStopReference = this.stopGame.bind(this))
     );
-
+  }
+  bindGameConf() {
     this.dom.tableBtn.addEventListener("change", (event) => {
       if (event.target.checked) {
         this.handleButtonSelection(event.target.id);
@@ -410,6 +411,7 @@ class Game {
       this.renderer = new CanvasRenderer("canv-field", this.setCell.bind(this));
     }
     this.init(this.renderer);
+    this.bindControls();
     this.createTable(this.width, this.height);
   }
   // запуск игры
