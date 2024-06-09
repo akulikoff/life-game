@@ -74,8 +74,8 @@ class CanvasRenderer {
       this.outer.width,
       this.outer.height
     );
-    this.canvas.width = columns * this.cellSize;
-    this.canvas.height = rows * this.cellSize;
+    this.canvas.width = columns * this.cellSize + 2;
+    this.canvas.height = rows * this.cellSize + 2;
     this.ctx = this.canvas.getContext("2d");
 
     this.ctx.strokeStyle = "blue";
@@ -103,7 +103,7 @@ class CanvasRenderer {
     let y = event.offsetY;
     let imageData = this.ctx.getImageData(x, y, 1, 1);
     let data = imageData.data;
-    if (data[0] > 0) {
+    if (data[0] > 0 && data[1] == 0) {
       this.cellVal = false;
     }
     this.draw(event); // Начинаем рисование
@@ -112,8 +112,8 @@ class CanvasRenderer {
   draw(event) {
     if (!this.drawing) return;
     const rect = this.canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = event.clientX - rect.left + 1;
+    const y = event.clientY - rect.top + 1;
     if (x < 0 || x > this.canvas.width || y < 0 || y > this.canvas.height) {
       return; // Предотвращение рисования за пределами canvas
     }
@@ -158,8 +158,8 @@ class CanvasRenderer {
   }
 
   getCellCoords(i, j, cellWidth, cellHeight) {
-    let y = i * cellWidth;
-    let x = j * cellHeight;
+    let y = i * cellWidth + 1;
+    let x = j * cellHeight + 1;
     return { x: x, y: y };
   }
   destroy() {
